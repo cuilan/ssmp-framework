@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.cuilan.bmp.mapper.UserMapper">
+
+    <resultMap id="userResultMap" type="cn.cuilan.bmp.entity.User">
+        <id property="id" column="id"/>
+        <result property="realName" column="real_name"/>
+        <result property="password" column="password"/>
+        <result property="age" column="age"/>
+    </resultMap>
+
+    <select id="getAllUser" resultMap="userResultMap">
+        SELECT * FROM user;
+    </select>
+
+</mapper>
