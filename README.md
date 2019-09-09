@@ -1,6 +1,11 @@
-# SpringBoot-MybatisPlus-Demo
+# ssmp-framework
 
 SpringBoot-MybatisPlus脚手架
+
+## 包含模块
+
+- demo
+- utils
 
 ## 自定义注解 @WebLog
 
