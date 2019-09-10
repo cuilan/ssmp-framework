@@ -10,14 +10,6 @@
     <name>ssmp-framework</name>
     <description>SpringBoot-MybatisPlus-framework</description>
 
-    <!--    <parent>-->
-    <!--        <groupId>org.springframework.boot</groupId>-->
-    <!--        <artifactId>spring-boot-starter-parent</artifactId>-->
-    <!--        <version>2.1.6.RELEASE</version>-->
-    <!--        <relativePath/> &lt;!&ndash; lookup parent from repository &ndash;&gt;-->
-    <!--    </parent>-->
-
-
     <modules>
         <module>demo</module>
         <module>utils</module>
@@ -29,7 +21,8 @@
         <java.version>1.8</java.version>
         <brave.version>5.4.2</brave.version>
         <spring-cloud.version>2.0.1.RELEASE</spring-cloud.version>
-        <spring-boot.version>2.0.5.RELEASE</spring-boot.version>
+        <!--<spring-boot.version>2.0.5.RELEASE</spring-boot.version>-->
+        <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
         <jetty-server.version>9.2.22.v20170606</jetty-server.version>
         <junit.jupiter.version>5.3.1</junit.jupiter.version>
         <!--<ct-mq-common.version>1.1</ct-mq-common.version>-->
@@ -168,7 +161,6 @@
                 <version>${mysql-jdbc.version}</version>
             </dependency>
 
-
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-api</artifactId>
@@ -187,32 +179,6 @@
                 <version>${junit.jupiter.version}</version>
                 <scope>test</scope>
             </dependency>
-
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-test</artifactId>
-                <scope>test</scope>
-            </dependency>
-            <!-- h2 -->
-            <dependency>
-                <groupId>com.h2database</groupId>
-                <artifactId>h2</artifactId>
-                <scope>test</scope>
-            </dependency>
-
-            <!-- dev -->
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-devtools</artifactId>
-                <scope>runtime</scope>
-                <optional>true</optional>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-configuration-processor</artifactId>
-                <optional>true</optional>
-            </dependency>
-
         </dependencies>
     </dependencyManagement>
 
@@ -288,30 +254,30 @@
             <properties>
                 <package.environment>dev</package.environment>
             </properties>
-<!--            <repositories>-->
-<!--                <repository>-->
-<!--                    <id>chouti-group</id>-->
-<!--                    <name>Chouti Group Repository</name>-->
-<!--                    <layout>default</layout>-->
-<!--                    <url>https://nexus.gozap.com/repository/chouti-group/</url>-->
-<!--                </repository>-->
-<!--            </repositories>-->
+            <!--            <repositories>-->
+            <!--                <repository>-->
+            <!--                    <id>chouti-group</id>-->
+            <!--                    <name>Chouti Group Repository</name>-->
+            <!--                    <layout>default</layout>-->
+            <!--                    <url>https://nexus.gozap.com/repository/chouti-group/</url>-->
+            <!--                </repository>-->
+            <!--            </repositories>-->
         </profile>
 
         <profile>
             <id>prod</id>
             <properties>
                 <package.environment>prod</package.environment>
-<!--                <ct-mq-common.version>1.1</ct-mq-common.version>-->
+                <!--                <ct-mq-common.version>1.1</ct-mq-common.version>-->
             </properties>
-<!--            <repositories>-->
-<!--                <repository>-->
-<!--                    <id>chouti-release</id>-->
-<!--                    <name>Chouti Release Repository</name>-->
-<!--                    <layout>default</layout>-->
-<!--                    <url>https://nexus.gozap.com/repository/chouti-hosted/</url>-->
-<!--                </repository>-->
-<!--            </repositories>-->
+            <!--            <repositories>-->
+            <!--                <repository>-->
+            <!--                    <id>chouti-release</id>-->
+            <!--                    <name>Chouti Release Repository</name>-->
+            <!--                    <layout>default</layout>-->
+            <!--                    <url>https://nexus.gozap.com/repository/chouti-hosted/</url>-->
+            <!--                </repository>-->
+            <!--            </repositories>-->
         </profile>
 
         <profile>
@@ -319,14 +285,14 @@
             <properties>
                 <package.environment>test</package.environment>
             </properties>
-<!--            <repositories>-->
-<!--                <repository>-->
-<!--                    <id>chouti-release</id>-->
-<!--                    <name>Chouti Release Repository</name>-->
-<!--                    <layout>default</layout>-->
-<!--                    <url>https://nexus.gozap.com/repository/chouti-group/</url>-->
-<!--                </repository>-->
-<!--            </repositories>-->
+            <!--            <repositories>-->
+            <!--                <repository>-->
+            <!--                    <id>chouti-release</id>-->
+            <!--                    <name>Chouti Release Repository</name>-->
+            <!--                    <layout>default</layout>-->
+            <!--                    <url>https://nexus.gozap.com/repository/chouti-group/</url>-->
+            <!--                </repository>-->
+            <!--            </repositories>-->
         </profile>
     </profiles>
 

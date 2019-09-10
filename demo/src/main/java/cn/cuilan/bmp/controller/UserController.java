@@ -1,14 +1,11 @@
 package cn.cuilan.bmp.controller;
 
 import cn.cuilan.bmp.annotation.WebLog;
-import cn.cuilan.bmp.entity.User;
 import cn.cuilan.bmp.service.UserService;
 import cn.cuilan.bmp.utils.Results;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 public class UserController {
