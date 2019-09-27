@@ -163,6 +163,9 @@ public class UploadUtil {
 //                BufferedImage image = reader.read(0, readParam);
 //                newFileName = newFileName.replaceAll(".webp", ".jpg");
 //                ImageIO.write(image, "jpg", new File(saveFilePath + "/" + newFileName));
+//                BufferedImage image = reader.read(0, readParam);
+                newFileName = newFileName.replaceAll(".webp", ".jpg");
+//                ImageIO.write(image, "jpg", new File(saveFilePath + "/" + newFileName));
                 log.info("文件从webp格式转成jpg");
             }
         } catch (Exception e) {
