@@ -6,7 +6,7 @@ import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Map;
-import com.gozap.chouti.grpc.Response;
+//import com.gozap.chouti.grpc.Response;
 
 /**
  * service层返回给外部的model
@@ -60,14 +60,14 @@ public class Result<T extends Object> {
         return new Result<>(LINK_EXIST, data, msg);
     }
 
-    public static Result fromResponse(Response response) {
-        if (response.isFail()) {
-            return Result.fail(response.getMsg());
-        }
-        Result result=Result.success(response.getData());
-        result.setTotal(response.getTotal());
-        return result;
-    }
+//    public static Result fromResponse(Response response) {
+//        if (response.isFail()) {
+//            return Result.fail(response.getMsg());
+//        }
+//        Result result=Result.success(response.getData());
+//        result.setTotal(response.getTotal());
+//        return result;
+//    }
 
     /**
      * 结果数据，错误时通常此字段为空

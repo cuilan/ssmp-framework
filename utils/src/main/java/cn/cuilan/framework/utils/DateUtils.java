@@ -18,52 +18,53 @@ import java.util.Optional;
  * 备注：
  */
 public final class DateUtils {
+
     public final static String DATE_TIME_FORMAT_1 = "yyyy.MM.dd HH:mm:ss";
     public final static String DATE_TIME_FORMAT_2 = "yyyy-MM-dd HH:mm:ss";
     public final static String DATE_TIME_FORMAT_3 = "yyyyMMddHHmmss";
     public final static String DATE_TIME_FORMAT_4 = "yyyy-MM-dd";
     public final static String DATE_TIME_FORMAT_5 = "yyyy.MM.dd";
 
-    private final static DateTimeFormatter formatter = DateTimeFormat.forPattern(DATE_TIME_FORMAT_1);
+    private final static DateTimeFormatter FORMATTER = DateTimeFormat.forPattern(DATE_TIME_FORMAT_1);
 
-    public static String now(){
+    public static String now() {
         return DateTime.now().toString(DATE_TIME_FORMAT_1);
     }
 
-    public static String format(String format){
+    public static String nowWithFormat(String format) {
         return DateTime.now().toString(format);
     }
 
-    public static Long plusDayMaxValueNanoByNow(int day){
+    public static Long plusDayMaxValueNanoByNow(int day) {
         // fixme joda-time 支持毫秒
-      return DateTime.now().plusDays(day).millisOfDay().withMaximumValue().getMillis()*1000;
+        return DateTime.now().plusDays(day).millisOfDay().withMaximumValue().getMillis() * 1000;
     }
 
-    public static String nanoTime(Long nanotime){
-        return  new DateTime(nanotime/1000L).toString(DATE_TIME_FORMAT_1);
+    public static String nanoTime(Long nanotime) {
+        return new DateTime(nanotime / 1000L).toString(DATE_TIME_FORMAT_1);
     }
 
-    public static String nanoTime(Long nanotime, String format){
-        return  new DateTime(nanotime/1000L).toString(StringUtils.isBlank(format)?DATE_TIME_FORMAT_1:format);
+    public static String nanoTime(Long nanotime, String format) {
+        return new DateTime(nanotime / 1000L).toString(StringUtils.isBlank(format) ? DATE_TIME_FORMAT_1 : format);
     }
 
-    public static String millsTime(Long millstime){
-        return  new DateTime(millstime).toString(DATE_TIME_FORMAT_1);
+    public static String millsTime(Long millstime) {
+        return new DateTime(millstime).toString(DATE_TIME_FORMAT_1);
     }
 
-    public static boolean checkDateTimeIsExpire(String strDateTime, Integer expireSeconds){
-        return DateTime.parse(strDateTime, formatter).plusSeconds(expireSeconds).isBeforeNow();
+    public static boolean checkDateTimeIsExpire(String strDateTime, Integer expireSeconds) {
+        return DateTime.parse(strDateTime, FORMATTER).plusSeconds(expireSeconds).isBeforeNow();
     }
 
-    public static Long formatStrToNanoTime(String datetime){
-        return DateTime.parse(datetime, formatter).getMillis()*1000;
+    public static Long formatStrToNanoTime(String datetime) {
+        return DateTime.parse(datetime, FORMATTER).getMillis() * 1000;
     }
 
-    public static Long format(String datetime, String pattern){
+    public static Long format(String datetime, String pattern) {
         return DateTime.parse(datetime, DateTimeFormat.forPattern(pattern)).getMillis();
     }
 
-    public static int toSencond(int day, int hour){
+    public static int toSencond(int day, int hour) {
         DateTime start = DateTime.now();
         DateTime end = start.plusHours(hour).plusDays(day);
         int value = Seconds.secondsBetween(start, end).getSeconds();
@@ -72,23 +73,20 @@ public final class DateUtils {
 
     /**
      * 根据当前时间计算偏移量，主要根据当前时间生成过期时间
-     * @param year
-     * @param month
-     * @param day
-     * @return
      */
-    public static Date plusYearMonthDay(int year, int month, int day){
-       return plusYearMonthDayHour(year, month, day, 0);
+    public static Date plusYearMonthDay(int year, int month, int day) {
+        return plusYearMonthDayHour(year, month, day, 0);
     }
-    public static Date plusYearMonthDayHour(int year, int month, int day, int hour){
+
+    public static Date plusYearMonthDayHour(int year, int month, int day, int hour) {
         return DateTime.now().plusYears(year).plusMonths(month).plusDays(day).plusHours(hour).toDate();
     }
 
-    public static String todayDateTime(){
+    public static String todayDateTime() {
         return DateTime.now().toString(DATE_TIME_FORMAT_3);
     }
 
-    public static String todayDateTime(String format){
+    public static String todayDateTime(String format) {
         return DateTime.now().toString(Optional.ofNullable(format).orElse(DATE_TIME_FORMAT_3));
     }
 }

@@ -16,13 +16,15 @@ import java.awt.image.WritableRaster;
  *******************************************************************************/
 public class BufferedImageLuminanceSource extends LuminanceSource {
 
-    private static final double MINUS_45_IN_RADIANS = -0.7853981633974483; // Math.toRadians(-45.0)
+    // Math.toRadians(-45.0)
+    private static final double MINUS_45_IN_RADIANS = -0.7853981633974483;
 
     private final BufferedImage image;
     private final int left;
     private final int top;
 
     private static final boolean EXPLICIT_LUMINANCE_CONVERSION;
+
     static {
         String property = System.getProperty("explicitLuminanceConversion");
         if (property == null) {
@@ -60,7 +62,8 @@ public class BufferedImageLuminanceSource extends LuminanceSource {
 
                         // see comments in implicit branch
                         if ((pixel & 0xFF000000) == 0) {
-                            pixel = 0xFFFFFFFF; // = white
+                            // = white
+                            pixel = 0xFFFFFFFF;
                         }
 
                         // .229R + 0.587G + 0.114B (YUV/YIQ for PAL and NTSC)
@@ -74,7 +77,6 @@ public class BufferedImageLuminanceSource extends LuminanceSource {
                 }
 
             } else {
-
                 // The color of fully-transparent pixels is irrelevant. They are often, technically, fully-transparent
                 // black (0 alpha, and then 0 RGB). They are often used, of course as the "white" area in a
                 // barcode image. Force any such pixel to be white:
@@ -85,7 +87,8 @@ public class BufferedImageLuminanceSource extends LuminanceSource {
                         boolean rowChanged = false;
                         for (int x = 0; x < width; x++) {
                             if ((buffer[x] & 0xFF000000) == 0) {
-                                buffer[x] = 0xFFFFFFFF; // = white
+                                // = white
+                                buffer[x] = 0xFFFFFFFF;
                                 rowChanged = true;
                             }
                         }
@@ -94,7 +97,6 @@ public class BufferedImageLuminanceSource extends LuminanceSource {
                         }
                     }
                 }
-
                 // Create a grayscale copy, no need to calculate the luminance manually
                 this.image.getGraphics().drawImage(image, 0, 0, null);
 

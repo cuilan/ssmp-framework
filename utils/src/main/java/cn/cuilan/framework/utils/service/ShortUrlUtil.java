@@ -27,7 +27,6 @@ public class ShortUrlUtil {
      * @return Map key为shotUrl 时, value为对应的短连接地址
      */
     public static String genShotUrl(String oriUrl) {
-
         return getShortUrlByWeibo(oriUrl);
     }
 

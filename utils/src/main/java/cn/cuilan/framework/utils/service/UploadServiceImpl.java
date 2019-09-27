@@ -63,7 +63,7 @@ public class UploadServiceImpl implements UploadService {
         String type = ImageUtils.getImageType(bs);
         type = StringUtils.isBlank(type) ? "jpg" : type;
 
-        String fileName = "CHOUTI_" + DateUtils.format("yyMMdd") + "_" + UUID.randomUUID().toString().replaceAll("-", "").toUpperCase() + "." + type;
+        String fileName = "CHOUTI_" + DateUtils.nowWithFormat("yyMMdd") + "_" + UUID.randomUUID().toString().replaceAll("-", "").toUpperCase() + "." + type;
         return uploadImgToSevenCows(bs, fileName, prefix);
     }
 

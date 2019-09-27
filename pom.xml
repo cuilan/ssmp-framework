@@ -21,6 +21,7 @@
     <modules>
         <module>demo</module>
         <module>utils</module>
+        <module>base</module>
     </modules>
 
     <properties>

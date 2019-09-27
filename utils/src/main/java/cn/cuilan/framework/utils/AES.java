@@ -70,6 +70,13 @@ public class AES {
         }
     }
 
+    /**
+     * 转为BASE64编码
+     *
+     * @param data 数据
+     * @param key  key
+     * @return base64编码字符串
+     */
     public static String encryptToBase64(String data, String key) {
         try {
             byte[] valueByte = encrypt(data.getBytes(ConfigureEncryptAndDecrypt.CHAR_ENCODING),
@@ -81,6 +88,13 @@ public class AES {
 
     }
 
+    /**
+     * BASE64解码
+     *
+     * @param data base64数据字符串
+     * @param key  key
+     * @return 原数据
+     */
     public static String decryptFromBase64(String data, String key) {
         try {
             byte[] originalData = Base64.getDecoder().decode(data.getBytes());
@@ -95,7 +109,7 @@ public class AES {
         try {
             byte[] valueByte = encrypt(data.getBytes(ConfigureEncryptAndDecrypt.CHAR_ENCODING),
                     Base64.getDecoder().decode(key.getBytes()));
-            return new String(java.util.Base64.getEncoder().encode(valueByte));
+            return new String(Base64.getEncoder().encode(valueByte));
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("encrypt fail!", e);
         }
@@ -128,14 +142,7 @@ public class AES {
         return new String(Base64.getEncoder().encode(generateRandomKey()));
     }
 
-
-    public static void main(String[] s) {
-        String key = "abcdef123456";
-        String s2 = crypt_pwd("{jn4367237571:", key);
-        System.out.println(s2);
-    }
-
-    public static String crypt_pwd(String src, String key) {
+    public static String cryptPwd(String src, String key) {
         char item;
         char keyItem;
         int i = 0;
@@ -149,8 +156,16 @@ public class AES {
             keyItem = keyChars[j];
             destChars[i] = (char) ((item & 0xF0) + ((item & 0x0F) ^ (keyItem & 0x0F)));
             j++;
-            if (j >= key.length()) j = 0;
+            if (j >= key.length()) {
+                j = 0;
+            }
         }
         return String.valueOf(destChars);
+    }
+
+    public static void main(String[] s) {
+        String key = "abcdef123456";
+        String s2 = cryptPwd("{jn4367237571:", key);
+        System.out.println(s2);
     }
 }

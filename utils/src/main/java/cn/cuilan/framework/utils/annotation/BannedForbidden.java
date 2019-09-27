@@ -10,5 +10,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface BannedForbidden {
+
     BannedTypeEnum[] value() default {BannedTypeEnum.ALL};
+
 }

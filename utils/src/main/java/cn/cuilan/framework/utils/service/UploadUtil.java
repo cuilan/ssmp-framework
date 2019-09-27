@@ -1,6 +1,6 @@
 package cn.cuilan.framework.utils.service;
 
-import com.luciad.imageio.webp.WebPReadParam;
+//import com.luciad.imageio.webp.WebPReadParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -155,21 +155,20 @@ public class UploadUtil {
                 // Obtain a WebP ImageReader instance
                 ImageReader reader = ImageIO.getImageReadersByMIMEType("image/webp").next();
                 // Configure decoding parameters
-                WebPReadParam readParam = new WebPReadParam();
-                readParam.setBypassFiltering(true);
+//                WebPReadParam readParam = new WebPReadParam();
+//                readParam.setBypassFiltering(true);
                 // Configure the input on the ImageReader
-                reader.setInput(new FileImageInputStream(new File(saveFilePath + "/" + newFileName)));
+//                reader.setInput(new FileImageInputStream(new File(saveFilePath + "/" + newFileName)));
                 // Decode the image
-                BufferedImage image = reader.read(0, readParam);
-                newFileName = newFileName.replaceAll(".webp", ".jpg");
-                ImageIO.write(image, "jpg", new File(saveFilePath + "/" + newFileName));
+//                BufferedImage image = reader.read(0, readParam);
+//                newFileName = newFileName.replaceAll(".webp", ".jpg");
+//                ImageIO.write(image, "jpg", new File(saveFilePath + "/" + newFileName));
                 log.info("文件从webp格式转成jpg");
             }
         } catch (Exception e) {
             log.error("webp转jpg异常:{}", e.getMessage());
             throw new IOException("不支持webp动态图上传");
         }
-
         return saveFilePath + "/" + newFileName;
     }
 
