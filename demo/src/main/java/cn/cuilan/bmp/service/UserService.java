@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class UserService {
+public class UserService extends AbstractServiceImpl<User> {
 
     private UserMapper userMapper;
 
@@ -18,16 +18,6 @@ public class UserService {
     @Autowired
     public UserService(UserMapper userMapper) {
         this.userMapper = userMapper;
-    }
-
-    /**
-     * 根据id查询用户
-     *
-     * @param id 用户id
-     * @return user对象
-     */
-    public User getUserById(long id) {
-        return userMapper.selectById(id);
     }
 
     /**

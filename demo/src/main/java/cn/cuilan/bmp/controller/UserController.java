@@ -20,7 +20,7 @@ public class UserController {
     @WebLog("根据id查询用户")
     @GetMapping("/api/user/getUserById")
     public Results getUserById(long id) {
-        return Results.success().data("user", userService.getUserById(id));
+        return Results.success().data("user", userService.selectById(id));
     }
 
     @WebLog(value = "根据用户名查询用户")
