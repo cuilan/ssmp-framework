@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class UserService extends AbstractServiceImpl<User> {
+public class UserService extends AbstractServiceImpl<UserMapper, User> {
 
     private UserMapper userMapper;
 
