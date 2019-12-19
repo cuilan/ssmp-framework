@@ -6,7 +6,6 @@
     <artifactId>ssmp-framework</artifactId>
     <packaging>pom</packaging>
     <version>1.0.0</version>
-
     <name>ssmp-framework</name>
     <description>SpringBoot-MybatisPlus-framework</description>
 
@@ -14,31 +13,19 @@
         <module>demo</module>
         <module>utils</module>
         <module>base</module>
+        <module>service</module>
     </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
-        <brave.version>5.4.2</brave.version>
-        <spring-cloud.version>2.0.1.RELEASE</spring-cloud.version>
-        <!--<spring-boot.version>2.0.5.RELEASE</spring-boot.version>-->
-        <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
-        <jetty-server.version>9.2.22.v20170606</jetty-server.version>
-        <junit.jupiter.version>5.3.1</junit.jupiter.version>
-        <!--<ct-mq-common.version>1.1</ct-mq-common.version>-->
-        <mysql-jdbc.version>8.0.16</mysql-jdbc.version>
-        <gson.version>2.8.5</gson.version>
-        <org.json.version>20090211</org.json.version>
+        <spring-boot.version>2.2.1.RELEASE</spring-boot.version>
+        <spring-cloud.version>Hoxton.RC2</spring-cloud.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-boot-starter</artifactId>
-                <version>3.0.1</version>
-            </dependency>
             <dependency>
                 <!-- Import dependency management from Spring Boot (依赖管理：继承一些默认的依赖，工程需要依赖的jar包的管理，申明其他dependency的时候就不需要version) -->
                 <groupId>org.springframework.boot</groupId>
@@ -47,207 +34,12 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <dependency>
-                <groupId>org.jodd</groupId>
-                <artifactId>jodd-bean</artifactId>
-                <version>5.0.5</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.ben-manes.caffeine</groupId>
-                <artifactId>caffeine</artifactId>
-                <version>2.6.2</version>
-            </dependency>
-            <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>1.16.20</version>
-            </dependency>
-
-            <!-- logback start -->
-            <dependency>
-                <groupId>org.codehaus.janino</groupId>
-                <artifactId>janino</artifactId>
-                <version>3.0.8</version>
-            </dependency>
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-classic</artifactId>
-                <version>1.2.3</version>
-            </dependency>
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-core</artifactId>
-                <version>1.2.3</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>1.7.25</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>jcl-over-slf4j</artifactId>
-                <version>1.7.25</version>
-            </dependency>
-            <!-- logback end -->
-
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>3.7</version>
-            </dependency>
-            <dependency>
-                <groupId>redis.clients</groupId>
-                <artifactId>jedis</artifactId>
-                <version>2.9.0</version>
-            </dependency>
-            <!-- 反射工具包 -->
-            <dependency>
-                <groupId>org.reflections</groupId>
-                <artifactId>reflections</artifactId>
-                <version>0.9.11</version>
-            </dependency>
-            <dependency>
-                <groupId>de.ruedigermoeller</groupId>
-                <artifactId>fst</artifactId>
-                <version>2.56</version>
-            </dependency>
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>4.12</version>
-            </dependency>
-
-            <!-- json start -->
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>fastjson</artifactId>
-                <version>1.2.51</version>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.jackson</groupId>
-                <artifactId>jackson-mapper-asl</artifactId>
-                <version>1.9.13</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.code.gson</groupId>
-                <artifactId>gson</artifactId>
-                <version>${gson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.json</groupId>
-                <artifactId>json</artifactId>
-                <version>${org.json.version}</version>
-            </dependency>
-            <!-- json end -->
-
-            <dependency>
-                <groupId>org.mybatis.spring.boot</groupId>
-                <artifactId>mybatis-spring-boot-starter</artifactId>
-                <version>1.3.1</version>
-            </dependency>
-            <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>mybatisplus-spring-boot-starter</artifactId>
-                <version>1.0.5</version>
-            </dependency>
-            <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus</artifactId>
-                <version>2.3</version>
-            </dependency>
-            <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
-                <version>${mysql-jdbc.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-api</artifactId>
-                <version>${junit.jupiter.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-params</artifactId>
-                <version>${junit.jupiter.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-engine</artifactId>
-                <version>${junit.jupiter.version}</version>
-                <scope>test</scope>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
-    <build>
-        <!-- 打包*Mapper.xml文件 -->
-        <resources>
-            <resource>
-                <directory>src/main/java</directory>
-                <includes>
-                    <include>**/*.xml</include>
-                </includes>
-            </resource>
-        </resources>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.5.1</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <encoding>UTF8</encoding>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.2</version>
-                <configuration>
-                    <archiveClasses>false</archiveClasses>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.19.1</version>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
-            <!-- 源代码打包插件 -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>3.0.1</version>
-                <configuration>
-                    <attach>true</attach>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>3.0.0-M1</version>
-            </plugin>
-        </plugins>
-    </build>
-
     <profiles>
         <profile>
-            <id>dev</id>
+            <id>local</id>
             <activation>
                 <!-- start application boot main, will load default yml, application-local.yml -->
                 <activeByDefault>true</activeByDefault>
@@ -255,45 +47,35 @@
             <properties>
                 <package.environment>dev</package.environment>
             </properties>
-            <!--            <repositories>-->
-            <!--                <repository>-->
-            <!--                    <id>chouti-group</id>-->
-            <!--                    <name>Chouti Group Repository</name>-->
-            <!--                    <layout>default</layout>-->
-            <!--                    <url>https://nexus.gozap.com/repository/chouti-group/</url>-->
-            <!--                </repository>-->
-            <!--            </repositories>-->
         </profile>
-
-        <profile>
-            <id>prod</id>
-            <properties>
-                <package.environment>prod</package.environment>
-                <!--                <ct-mq-common.version>1.1</ct-mq-common.version>-->
-            </properties>
-            <!--            <repositories>-->
-            <!--                <repository>-->
-            <!--                    <id>chouti-release</id>-->
-            <!--                    <name>Chouti Release Repository</name>-->
-            <!--                    <layout>default</layout>-->
-            <!--                    <url>https://nexus.gozap.com/repository/chouti-hosted/</url>-->
-            <!--                </repository>-->
-            <!--            </repositories>-->
-        </profile>
-
         <profile>
             <id>test</id>
             <properties>
                 <package.environment>test</package.environment>
             </properties>
-            <!--            <repositories>-->
-            <!--                <repository>-->
-            <!--                    <id>chouti-release</id>-->
-            <!--                    <name>Chouti Release Repository</name>-->
-            <!--                    <layout>default</layout>-->
-            <!--                    <url>https://nexus.gozap.com/repository/chouti-group/</url>-->
-            <!--                </repository>-->
-            <!--            </repositories>-->
+            <repositories>
+                <repository>
+                    <id>XXXXX-release</id>
+                    <name>Test Release Repository</name>
+                    <layout>default</layout>
+                    <url>https://nexus.XXXXXX.com/repository/XXXXX-release/</url>
+                </repository>
+            </repositories>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <package.environment>prod</package.environment>
+                <ct-mq-common.version>1.1</ct-mq-common.version>
+            </properties>
+            <repositories>
+                <repository>
+                    <id>XXXXX-release</id>
+                    <name>Product Release Repository</name>
+                    <layout>default</layout>
+                    <url>https://nexus.XXXXXX.com/repository/XXXXX-release/</url>
+                </repository>
+            </repositories>
         </profile>
     </profiles>
 
