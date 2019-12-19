@@ -4,7 +4,9 @@ SpringBoot-MybatisPlus脚手架
 
 ## 包含模块
 
+- base
 - demo
+- service
 - utils
 
 ## 自定义注解 @WebLog
