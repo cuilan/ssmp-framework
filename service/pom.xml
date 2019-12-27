@@ -5,11 +5,12 @@
         <groupId>cn.cuilan</groupId>
         <artifactId>ssmp-framework</artifactId>
         <version>1.0.0</version>
-        <relativePath/>
     </parent>
     <artifactId>service</artifactId>
     <packaging>jar</packaging>
+    <version>1.0.0</version>
     <name>service</name>
+
     <properties>
         <java.version>1.8</java.version>
 
@@ -20,6 +21,11 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>cn.cuilan</groupId>
+            <artifactId>ssmp-utils</artifactId>
+            <version>1.0.0</version>
+        </dependency>
         <!-- spring boot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -119,4 +125,17 @@
             </exclusions>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

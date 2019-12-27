@@ -1,9 +1,11 @@
 package cn.cuilan.bmp.config;
 
-import com.baomidou.mybatisplus.plugins.PaginationInterceptor;
-import org.mybatis.spring.annotation.MapperScan;
+import cn.cuilan.aspect.MapperAspect;
+import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * MybatisPlus配置类
@@ -12,18 +14,20 @@ import org.springframework.context.annotation.Configuration;
  * @date 2019/7/3
  */
 @Configuration
-@MapperScan("cn.cuilan.bmp.mapper")
+@EnableTransactionManagement(proxyTargetClass = true)
 public class MybatisPlusConfig {
 
     /**
-     * 分页插件
+     * mybatis-plus SQL执行效率插件【生产环境可以关闭】
      */
     @Bean
-    public PaginationInterceptor paginationInterceptor() {
-        PaginationInterceptor page = new PaginationInterceptor();
-        // 设置方言类型
-        page.setDialectType("mysql");
-        return page;
+    @Profile({"dev", "local"})
+    public PerformanceInterceptor performanceInterceptor() {
+        return new PerformanceInterceptor();
     }
 
+    @Bean
+    public MapperAspect mapperAspect() {
+        return new MapperAspect();
+    }
 }

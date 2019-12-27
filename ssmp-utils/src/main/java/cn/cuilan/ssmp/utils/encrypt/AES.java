@@ -33,9 +33,9 @@ public class AES {
     public static byte[] generateRandomKey() {
         KeyGenerator keygen;
         try {
-            keygen = KeyGenerator.getInstance(ConfigureEncryptAndDecrypt.AES_ALGORITHM);
+            keygen = KeyGenerator.getInstance(EncryptAlgorithm.AES_ALGORITHM);
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(" genarateRandomKey fail!", e);
+            throw new RuntimeException("genarateRandomKey fail!", e);
         }
         SecureRandom random = new SecureRandom();
         keygen.init(random);
@@ -54,7 +54,7 @@ public class AES {
      */
     public static String encryptWithKeyBase64(String data, String key) {
         try {
-            byte[] valueByte = encrypt(data.getBytes(ConfigureEncryptAndDecrypt.CHAR_ENCODING),
+            byte[] valueByte = encrypt(data.getBytes(EncryptAlgorithm.CHAR_ENCODING),
                     Base64.getDecoder().decode(key.getBytes()));
             return new String(Base64.getEncoder().encode(valueByte));
         } catch (UnsupportedEncodingException e) {
@@ -76,11 +76,11 @@ public class AES {
             throw new RuntimeException("Invalid AES key length (must be 16 bytes)");
         }
         try {
-            SecretKeySpec secretKey = new SecretKeySpec(key, ConfigureEncryptAndDecrypt.AES);
+            SecretKeySpec secretKey = new SecretKeySpec(key, EncryptAlgorithm.AES_ALGORITHM);
             byte[] enCodeFormat = secretKey.getEncoded();
-            SecretKeySpec seckey = new SecretKeySpec(enCodeFormat, ConfigureEncryptAndDecrypt.AES);
+            SecretKeySpec seckey = new SecretKeySpec(enCodeFormat, EncryptAlgorithm.AES_ALGORITHM);
             // 创建密码器
-            Cipher cipher = Cipher.getInstance(ConfigureEncryptAndDecrypt.AES_ALGORITHM);
+            Cipher cipher = Cipher.getInstance(EncryptAlgorithm.AES_ALGORITHM);
             // 初始化
             cipher.init(Cipher.ENCRYPT_MODE, seckey);
             // 加密
@@ -103,7 +103,7 @@ public class AES {
         try {
             byte[] originalData = Base64.getDecoder().decode(data.getBytes());
             byte[] valueByte = decrypt(originalData, Base64.getDecoder().decode(key.getBytes()));
-            return new String(valueByte, ConfigureEncryptAndDecrypt.CHAR_ENCODING);
+            return new String(valueByte, EncryptAlgorithm.CHAR_ENCODING);
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("decrypt fail!", e);
         }
@@ -123,11 +123,11 @@ public class AES {
             throw new RuntimeException("Invalid AES key length (must be 16 bytes)");
         }
         try {
-            SecretKeySpec secretKey = new SecretKeySpec(key, ConfigureEncryptAndDecrypt.AES);
+            SecretKeySpec secretKey = new SecretKeySpec(key, EncryptAlgorithm.AES_ALGORITHM);
             byte[] enCodeFormat = secretKey.getEncoded();
-            SecretKeySpec seckey = new SecretKeySpec(enCodeFormat, ConfigureEncryptAndDecrypt.AES);
+            SecretKeySpec seckey = new SecretKeySpec(enCodeFormat, EncryptAlgorithm.AES_ALGORITHM);
             // 创建密码器
-            Cipher cipher = Cipher.getInstance(ConfigureEncryptAndDecrypt.AES_ALGORITHM);
+            Cipher cipher = Cipher.getInstance(EncryptAlgorithm.AES_ALGORITHM);
             // 初始化
             cipher.init(Cipher.DECRYPT_MODE, seckey);
             // 解密

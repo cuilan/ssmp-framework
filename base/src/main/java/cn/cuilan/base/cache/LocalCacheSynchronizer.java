@@ -1,6 +1,6 @@
 package cn.cuilan.base.cache;
 
-import cn.cuilan.framework.utils.NetworkUtils;
+import cn.cuilan.ssmp.utils.NetworkUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;

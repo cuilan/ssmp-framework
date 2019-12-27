@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 public abstract class BaseService<M extends BaseMapper<T>, T> extends ServiceImpl<M, T> {
 
-    T getNotNull(Long id) {
+    public T getNotNull(Long id) {
         T t = baseMapper.selectById(id);
         if (t == null) {
             throw new BaseException("id not exsit.");
