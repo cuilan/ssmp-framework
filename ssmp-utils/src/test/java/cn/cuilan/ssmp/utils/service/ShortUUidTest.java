@@ -1,5 +1,6 @@
 package cn.cuilan.ssmp.utils.service;
 
+import cn.cuilan.ssmp.utils.ShortUUid;
 import org.junit.Test;
 
 public class ShortUUidTest {

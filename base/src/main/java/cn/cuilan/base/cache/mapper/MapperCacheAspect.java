@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @Aspect
 @Slf4j
 public class MapperCacheAspect implements InitializingBean {
-    private static final String ENTITY_PACKAGE = "cn.cuilan.entity";
+    private static final String ENTITY_PACKAGE = "cn.cuilan.ssmp.entity";
     public static Map<Class<IdEntity>, ValueCache<Long, IdEntity>> entityCacheMap = new HashMap<>();
     private Method baseMapperSelectBatchIds;
 

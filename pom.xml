@@ -11,9 +11,9 @@
     <description>SpringBoot-MybatisPlus-framework</description>
 
     <modules>
-        <module>demo</module>
         <module>base</module>
-        <module>service</module>
+        <module>ssmp-admin</module>
+        <module>ssmp-service</module>
         <module>ssmp-utils</module>
     </modules>
 

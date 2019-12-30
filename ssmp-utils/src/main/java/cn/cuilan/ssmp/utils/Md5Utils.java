@@ -7,6 +7,7 @@ import java.security.NoSuchAlgorithmException;
 
 @Slf4j
 public class Md5Utils {
+
     private static byte[] md5(String s) {
         MessageDigest algorithm;
         try {
@@ -49,6 +50,7 @@ public class Md5Utils {
 
     /**
      * 生成32位md5码
+     *
      * @param value
      * @return
      */

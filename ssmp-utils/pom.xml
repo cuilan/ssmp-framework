@@ -21,7 +21,7 @@
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus</artifactId>
-            <version>3.0.1</version>
+            <version>3.1.2</version>
         </dependency>
         <dependency>
             <groupId>com.baomidou</groupId>
@@ -35,6 +35,14 @@
             <scope>runtime</scope>
         </dependency>
         <!--mybatis-plus-generator结束-->
+
+        <!-- 分页插件 -->
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper-spring-boot-starter</artifactId>
+            <version>1.2.13</version>
+        </dependency>
+        <!-- end utils -->
 
         <dependency>
             <groupId>org.apache.velocity</groupId>
