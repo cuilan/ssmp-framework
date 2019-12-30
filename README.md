@@ -5,9 +5,9 @@ SpringBoot-MybatisPlus脚手架
 ## 包含模块
 
 - base
-- demo
-- service
-- utils
+- ssmp-admin
+- ssmp-service
+- ssmp-utils
 
 ## 自定义注解 @WebLog
 
@@ -16,9 +16,12 @@ SpringBoot-MybatisPlus脚手架
 使用如下：
 
 ```java
-@WebLog("接口描述信息")
-@GetMapping("/hello")
-public String getUser() {
-    return "Hello World!";
+@RestController
+public class HelloController {
+    @WebLog("接口描述信息")
+    @GetMapping("/hello")
+    public String seyHello() {
+        return "Hello World!";
+    }
 }
 ``` 

@@ -1,5 +1,6 @@
 package cn.cuilan.ssmp.admin.security.domain;
 
+import cn.cuilan.ssmp.entity.SysUser;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.security.core.GrantedAuthority;
@@ -8,8 +9,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 
 @Data
-//@EqualsAndHashCode(callSuper = true)
-public class SysUserDetails implements UserDetails {
+@EqualsAndHashCode(callSuper = true)
+public class SysUserDetails extends SysUser implements UserDetails {
 
     // TODO
 

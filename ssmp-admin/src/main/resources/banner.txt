@@ -1,0 +1,7 @@
+${AnsiColor.MAGENTA}    ______  ______  _____  ______
+${AnsiColor.BLUE}   /  ___/ /  ___/ /     \ \____ \
+${AnsiColor.CYAN}   \___ \  \___ \ |  Y Y  \|  |_> >
+${AnsiColor.BLUE}  /____  >/____  >|__|_|  /|   __/
+${AnsiColor.MAGENTA}       \/      \/       \/ |__|
+${AnsiColor.GREEN}    ssmp version: ${application.version}    Spring-Boot.version: ${spring-boot.version}
+${AnsiColor.BLACK}

@@ -1,0 +1,22 @@
+version: '3'
+services:
+  db:
+    # 构建mysql镜像
+    image: mysql
+    # 容器名
+    container_name: mysql-db
+    # 设置utf8字符集
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    restart: always
+    environment:
+      # root管理员用户密码
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_ROOT_HOST: '%'
+    ports:
+      # host物理直接映射端口为6606
+      - '3306:3306'
+    volumes:
+      # mysql数据库挂载到host物理机目录./db
+      - "./db:/var/lib/mysql"
+      # 容器的配置目录挂载到host物理机目录./conf
+      - "./conf:/etc/mysql/conf.d"
