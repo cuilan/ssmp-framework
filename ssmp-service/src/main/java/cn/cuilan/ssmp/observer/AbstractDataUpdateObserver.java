@@ -24,10 +24,17 @@ import java.util.concurrent.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+/**
+ * 抽象实体更新观察者
+ *
+ * @param <T> BaseObservableEntity子类实体
+ * @author zhang.yan
+ * @date 2019-12-31
+ */
 @Slf4j
-public abstract class DataUpdateObserver<T extends BaseObservableEntity> implements InitializingBean {
+public abstract class AbstractDataUpdateObserver<T extends BaseObservableEntity> implements InitializingBean {
 
-    static Map<Class<BaseObservableEntity>, DataUpdateObserver> updateObserverMap = new HashMap<>();
+    static Map<Class<BaseObservableEntity>, AbstractDataUpdateObserver> updateObserverMap = new HashMap<>();
 
     private static ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNamePrefix("observer-pool-%d").build();
 
@@ -44,7 +51,7 @@ public abstract class DataUpdateObserver<T extends BaseObservableEntity> impleme
     List<UpdateHandlerWithContext<T>> afterCommitHandlerList = new ArrayList<>();
 
     // 构造器
-    public DataUpdateObserver(BaseMapper<T> baseMapper) {
+    public AbstractDataUpdateObserver(BaseMapper<T> baseMapper) {
         this.baseMapper = baseMapper;
     }
 
@@ -118,7 +125,7 @@ public abstract class DataUpdateObserver<T extends BaseObservableEntity> impleme
             }
             entityClass = (Class) typeParams[0];
         }
-        DataUpdateObserver dataCreateObserver = updateObserverMap.get(entityClass);
+        AbstractDataUpdateObserver dataCreateObserver = updateObserverMap.get(entityClass);
 
         if (dataCreateObserver != null) {
             throw new RuntimeException(String.format("%s的观察者存在多个[%s,%s]",

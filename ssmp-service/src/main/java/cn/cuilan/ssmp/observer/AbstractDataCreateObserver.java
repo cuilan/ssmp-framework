@@ -22,10 +22,17 @@ import java.util.concurrent.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+/**
+ * 抽象实体创建观察者
+ *
+ * @param <T> BaseObservableEntity子类实体
+ * @author zhang.yan
+ * @date 2019-12-31
+ */
 @Slf4j
-public abstract class DataCreateObserver<T extends BaseObservableEntity> implements InitializingBean {
+public abstract class AbstractDataCreateObserver<T extends BaseObservableEntity> implements InitializingBean {
 
-    protected static Map<Class<BaseObservableEntity>, DataCreateObserver> createObserverMap = new HashMap<>();
+    protected static Map<Class<BaseObservableEntity>, AbstractDataCreateObserver> createObserverMap = new HashMap<>();
 
     private static ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNamePrefix("observer-pool-%d").build();
 
@@ -42,7 +49,7 @@ public abstract class DataCreateObserver<T extends BaseObservableEntity> impleme
     private List<CreateHandlerWithContext<T>> afterCommitHandlerList = new ArrayList<>();
 
     // 构造器
-    public DataCreateObserver(BaseMapper<T> baseMapper) {
+    public AbstractDataCreateObserver(BaseMapper<T> baseMapper) {
         this.baseMapper = baseMapper;
     }
 
@@ -108,7 +115,7 @@ public abstract class DataCreateObserver<T extends BaseObservableEntity> impleme
             }
             entityClass = (Class) typeParams[0];
         }
-        DataCreateObserver dataCreateObserver = createObserverMap.get(entityClass);
+        AbstractDataCreateObserver dataCreateObserver = createObserverMap.get(entityClass);
 
         if (dataCreateObserver != null) {
             throw new RuntimeException(String.format("%s的观察者存在多个[%s,%s]",
@@ -119,8 +126,8 @@ public abstract class DataCreateObserver<T extends BaseObservableEntity> impleme
         }
         createObserverMap.put(entityClass, this);
 
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> ListenJvmShutdown.shutdownThreadPool(executorService, "DataCreateObserver-Shutdown")));
-
+        Runtime.getRuntime().addShutdownHook(new Thread(() ->
+                ListenJvmShutdown.shutdownThreadPool(executorService, "DataCreateObserver-Shutdown")));
     }
 
     protected abstract void regCreateObserver(Register register);

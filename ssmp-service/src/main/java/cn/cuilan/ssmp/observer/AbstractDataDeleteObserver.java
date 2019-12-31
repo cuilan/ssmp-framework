@@ -22,10 +22,17 @@ import java.util.concurrent.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+/**
+ * 抽象实体删除观察者
+ *
+ * @param <T> BaseObservableEntity子类实体
+ * @author zhang.yan
+ * @date 2019-12-31
+ */
 @Slf4j
-public abstract class DataDeleteObserver<T extends BaseObservableEntity> implements InitializingBean {
+public abstract class AbstractDataDeleteObserver<T extends BaseObservableEntity> implements InitializingBean {
 
-    static Map<Class<BaseObservableEntity>, DataDeleteObserver> deleteObserverMap = new HashMap<>();
+    static Map<Class<BaseObservableEntity>, AbstractDataDeleteObserver> deleteObserverMap = new HashMap<>();
 
     private static ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNamePrefix("observer-pool-%d").build();
 
@@ -41,7 +48,7 @@ public abstract class DataDeleteObserver<T extends BaseObservableEntity> impleme
     private List<DeleteHandlerWithContext<T>> afterHandlerList = new ArrayList<>();
     private List<DeleteHandlerWithContext<T>> afterCommitHandlerList = new ArrayList<>();
 
-    public DataDeleteObserver(BaseMapper<T> baseMapper) {
+    public AbstractDataDeleteObserver(BaseMapper<T> baseMapper) {
         this.baseMapper = baseMapper;
     }
 
@@ -98,7 +105,7 @@ public abstract class DataDeleteObserver<T extends BaseObservableEntity> impleme
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         regDeleteObserver(new Register());
         if (entityClass == null) {
             Type[] typeParams = ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments();
@@ -107,7 +114,7 @@ public abstract class DataDeleteObserver<T extends BaseObservableEntity> impleme
             }
             entityClass = (Class) typeParams[0];
         }
-        DataDeleteObserver dataDeleteObserver = deleteObserverMap.get(entityClass);
+        AbstractDataDeleteObserver dataDeleteObserver = deleteObserverMap.get(entityClass);
 
         if (dataDeleteObserver != null) {
             throw new RuntimeException(String.format("%s的观察者存在多个[%s,%s]",

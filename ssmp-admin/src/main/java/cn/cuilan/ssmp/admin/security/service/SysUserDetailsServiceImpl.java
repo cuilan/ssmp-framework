@@ -2,12 +2,13 @@ package cn.cuilan.ssmp.admin.security.service;
 
 import cn.cuilan.ssmp.admin.security.domain.SysUserDetails;
 import cn.cuilan.ssmp.entity.SysUser;
-import cn.cuilan.ssmp.exception.BaseException;
 import cn.cuilan.ssmp.mapper.SysUserMapper;
 import cn.cuilan.ssmp.redis.RedisUtils;
 import cn.cuilan.ssmp.redis.SysUserRedisPrefix;
 import cn.cuilan.ssmp.service.SysUserService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -27,7 +28,7 @@ import javax.annotation.Resource;
 public class SysUserDetailsServiceImpl extends SysUserService implements UserDetailsService {
 
     // 允许登录失败次数
-    @Value("ssmp.sysUser.loginTimes")
+    @Value("${ssmp.sysUser.loginTimes}")
     private String allowLoginErrorTimes;
 
     /**
@@ -50,7 +51,7 @@ public class SysUserDetailsServiceImpl extends SysUserService implements UserDet
         SysUser sysUser = getSysUserInfo(null, username);
         if (sysUser == null) {
             incrLoginErrorCount(username);
-            throw new UsernameNotFoundException("用户名不存在");
+            throw new UsernameNotFoundException("用户不存在");
         }
         return new SysUserDetails(sysUser);
     }
@@ -70,7 +71,7 @@ public class SysUserDetailsServiceImpl extends SysUserService implements UserDet
     public void checkPassword(SysUserDetails userDetails, String password) {
         if (!new BCryptPasswordEncoder().matches(password, userDetails.getPassword())) {
             incrLoginErrorCount(userDetails.getUsername());
-            throw new BaseException("密码错误");
+            throw new BadCredentialsException("密码错误");
         }
     }
 
@@ -81,8 +82,8 @@ public class SysUserDetailsServiceImpl extends SysUserService implements UserDet
      */
     private void checkLoginErrorCount(String username) {
         String errorCount = redisUtils.getString(SysUserRedisPrefix.LOGIN_ERROR, username);
-        if (!StringUtils.isEmpty(errorCount) && Integer.parseInt(errorCount) >= Integer.valueOf(allowLoginErrorTimes)) {
-            throw new BaseException("登录次数超过限制");
+        if (!StringUtils.isEmpty(errorCount) && Integer.parseInt(errorCount) >= Integer.parseInt(allowLoginErrorTimes)) {
+            throw new LockedException("登录次数超过限制");
         }
     }
 

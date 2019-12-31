@@ -1,23 +1,22 @@
-# »·¾³ÅäÖÃ
 spring:
   profiles:
     active: dev
   main:
-    # ÔÊĞíBeanDefinition³öÏÖÖØ¸´Ãû³Æ£¬×ÓÀà¿ÉÒÔ¸²¸Ç
+    # å…è®¸BeanDefinitionå‡ºç°é‡å¤åç§°ï¼Œå­ç±»å¯ä»¥è¦†ç›–
     allow-bean-definition-overriding: true
 
 mybatis-plus:
   configuration:
-    # ¹Ø±ÕÍÕ·åµ½ÏÂ»®ÏßµÄÓ³Éä
+    # å…³é—­é©¼å³°åˆ°ä¸‹åˆ’çº¿çš„æ˜ å°„
     map-underscore-to-camel-case: true
   global-config:
     db-config:
-      # ¹Ø±ÕÊı¾İ¿â±íµÄÏÂ»®ÏßÓ³Éä
+      # å…³é—­æ•°æ®åº“è¡¨çš„ä¸‹åˆ’çº¿æ˜ å°„
       table-underline: false
-  # Ã¶¾ÙÓ³Éä°ü
+  # æšä¸¾æ˜ å°„åŒ…
   typeEnumsPackage: cn.cuilan.ssmp.enums
 
-# ·ÖÒ³ÅäÖÃ
+# åˆ†é¡µé…ç½®
 pagehelper:
   helper-dialect: mysql
   reasonable: true

@@ -20,7 +20,7 @@ public class UserAuthenticationEntryPointHandler implements AuthenticationEntryP
     @Override
     public void commence(HttpServletRequest request,
                          HttpServletResponse response,
-                         AuthenticationException e) {
-        ResultUtil.responseJson(response, Result.noAuth());
+                         AuthenticationException exception) {
+        ResultUtil.responseJson(response, Result.fail(exception.getMessage()));
     }
 }

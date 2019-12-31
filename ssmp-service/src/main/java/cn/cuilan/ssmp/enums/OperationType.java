@@ -39,6 +39,7 @@ public enum OperationType {
     MENU_SORT("MENU_SORT", "修改系统菜单排序"),
     MENU_RELATION("MENU_RELATION", "修改系统菜单父子级关系");
 
+    // 类型值
     private String value;
 
     // 描述

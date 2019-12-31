@@ -8,6 +8,13 @@ import org.springframework.data.annotation.Id;
 
 import java.io.Serializable;
 
+/**
+ * ID基础实体抽象类
+ *
+ * @param <ID> 实体ID
+ * @author zhang.yan
+ * @date 2019-12-31
+ */
 @Data
 @EqualsAndHashCode(callSuper = false)
 public abstract class BaseIdEntity<ID extends Serializable> extends BaseObservableEntity<ID> implements Cloneable {

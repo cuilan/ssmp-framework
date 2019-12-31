@@ -25,14 +25,6 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
     public void onAuthenticationFailure(HttpServletRequest request,
                                         HttpServletResponse response,
                                         AuthenticationException exception) {
-        // 用户不存在
-        if (exception instanceof UsernameNotFoundException) {
-            ResultUtil.responseJson(response, Result.userNotFound());
-        }
-        // 密码不正确
-        if (exception instanceof BadCredentialsException) {
-            ResultUtil.responseJson(response, Result.wrongPassword());
-        }
-        ResultUtil.responseJson(response, Result.fail("登录失败."));
+        ResultUtil.responseJson(response, Result.fail(exception.getMessage()));
     }
 }

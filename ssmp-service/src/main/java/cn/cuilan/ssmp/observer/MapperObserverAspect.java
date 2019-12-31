@@ -27,7 +27,7 @@ public class MapperObserverAspect {
             return pjp.proceed(pjp.getArgs());
         }
         BaseObservableEntity observableEntity = (BaseObservableEntity) entity;
-        DataCreateObserver dataCreateObserver = DataCreateObserver.createObserverMap.get(observableEntity.getClass());
+        AbstractDataCreateObserver dataCreateObserver = AbstractDataCreateObserver.createObserverMap.get(observableEntity.getClass());
         if (dataCreateObserver == null) {
             return pjp.proceed(pjp.getArgs());
         }
@@ -66,7 +66,7 @@ public class MapperObserverAspect {
             return pjp.proceed(pjp.getArgs());
         }
         BaseObservableEntity observable = (BaseObservableEntity) args;
-        DataUpdateObserver dataUpdateObserver = DataUpdateObserver.updateObserverMap.get(observable.getClass());
+        AbstractDataUpdateObserver dataUpdateObserver = AbstractDataUpdateObserver.updateObserverMap.get(observable.getClass());
         if (dataUpdateObserver == null) {
             return pjp.proceed(pjp.getArgs());
         }
@@ -89,7 +89,7 @@ public class MapperObserverAspect {
             return pjp.proceed(pjp.getArgs());
         }
         BaseObservableEntity observable = (BaseObservableEntity) args;
-        DataDeleteObserver dataDeleteObserver = DataDeleteObserver.deleteObserverMap.get(observable.getClass());
+        AbstractDataDeleteObserver dataDeleteObserver = AbstractDataDeleteObserver.deleteObserverMap.get(observable.getClass());
         if (dataDeleteObserver == null) {
             return pjp.proceed(pjp.getArgs());
         }

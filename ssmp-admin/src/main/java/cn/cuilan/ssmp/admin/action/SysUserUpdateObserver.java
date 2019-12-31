@@ -5,7 +5,7 @@ import cn.cuilan.ssmp.entity.SysOperationLog;
 import cn.cuilan.ssmp.entity.SysUser;
 import cn.cuilan.ssmp.enums.OperationType;
 import cn.cuilan.ssmp.mapper.SysOperationLogMapper;
-import cn.cuilan.ssmp.observer.DataUpdateObserver;
+import cn.cuilan.ssmp.observer.AbstractDataUpdateObserver;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 import org.springframework.stereotype.Component;
@@ -14,7 +14,7 @@ import javax.annotation.Resource;
 import java.util.Objects;
 
 @Component
-public class SysUserUpdateObserver extends DataUpdateObserver<SysUser> {
+public class SysUserUpdateObserver extends AbstractDataUpdateObserver<SysUser> {
 
     @Resource
     private SysOperationLogMapper sysOperationLogMapper;

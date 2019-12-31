@@ -5,14 +5,14 @@ import cn.cuilan.ssmp.entity.SysOperationLog;
 import cn.cuilan.ssmp.entity.SysUser;
 import cn.cuilan.ssmp.enums.OperationType;
 import cn.cuilan.ssmp.mapper.SysOperationLogMapper;
-import cn.cuilan.ssmp.observer.DataCreateObserver;
+import cn.cuilan.ssmp.observer.AbstractDataCreateObserver;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
 @Component
-public class SysUserCreateObserver extends DataCreateObserver<SysUser> {
+public class SysUserCreateObserver extends AbstractDataCreateObserver<SysUser> {
 
     @Resource
     private SysOperationLogMapper sysOperationLogMapper;

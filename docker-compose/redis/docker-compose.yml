@@ -1,0 +1,13 @@
+version: '3'
+services:
+  db:
+    image: redis:5-alpine
+    # 容器名
+    container_name: redis-5-alpine
+    restart: always
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - '6379:6379'
+    volumes:
+      - "./db:/bitnami/redis/data"

@@ -12,9 +12,9 @@ public interface SysOperationLogMapper extends BaseMapper<SysOperationLog> {
 
     @Select({"<script>" +
             "SELECT * FROM t_sys_operation_log WHERE 1 = 1 " +
-            "<if test='sysUserId!=null'> AND sysUserId = #{sysUserId} </if>" +
-            "<if test='startTime!=null'> AND createTime &gt;= #{startTime} </if>" +
-            "<if test='endTime!=null'> AND createTime &lt; #{endTime} </if>" +
+            "<if test='sysUserId!=null'> AND sys_user_id = #{sysUserId} </if>" +
+            "<if test='startTime!=null'> AND create_time &gt;= #{startTime} </if>" +
+            "<if test='endTime!=null'> AND create_time &lt; #{endTime} </if>" +
             " order by id desc" +
             "</script>"})
     Page<SysOperationLog> getOperationLogsByAdmin(@Param("sysUserId") Long sysUserId,

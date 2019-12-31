@@ -13,14 +13,27 @@ import org.aspectj.lang.reflect.MethodSignature;
 import java.lang.reflect.Parameter;
 
 /**
- * 分页插件AOP
+ * AOP 环绕通知，Mapper 层方法增强
+ * insert: 设置默认创建时间、更新时间
+ * update: 仅支持 updateById 方法进行更新，并设置更新时间
+ * <p>
+ * 对查询方法增加: 分页插件
+ *
+ * @author zhang.yan
+ * @date 2019-12-31
  */
 @Aspect
 public class MapperAspect {
 
+    // 页码
     private static final String PAGE_NUM = "pageNum";
+
+    // 分页大小
     private static final String PAGE_SIZE = "pageSize";
 
+    /**
+     * AOP环绕通知，Mapper insert方法，默认插入时添加创建时间、更新时间
+     */
     @Around("execution(* cn.cuilan.ssmp.*.*Mapper.insert(..))")
     public Object insert(ProceedingJoinPoint pjp) {
         try {
@@ -35,12 +48,16 @@ public class MapperAspect {
                 entity.setUpdateTime(now);
             }
             return pjp.proceed(pjp.getArgs());
-
         } catch (Throwable throwable) {
             throw new RuntimeException(throwable);
         }
     }
 
+    /**
+     * AOP环绕通知，Mapper update方法。
+     * 更新方法仅支持updateById，其余update方法禁用，
+     * 并设置更新时间。
+     */
     @Around("execution(* cn.cuilan.ssmp.*.*Mapper.update*(..))")
     public Object update(ProceedingJoinPoint pjp) {
         try {
@@ -57,13 +74,16 @@ public class MapperAspect {
                 entity.setUpdateTime(System.currentTimeMillis());
             }
             return pjp.proceed(pjp.getArgs());
-
         } catch (Throwable throwable) {
             throw new RuntimeException(throwable);
         }
-
     }
 
+    /**
+     * AOP环绕通知，Mapper所有方法。
+     * 如果查询方法中包含 @Param 注解，并且包含pageNum、pageSize两个参数，
+     * 则设置 PageHelper 分页查询，参数设置在 ThreadLocal 中，线程安全。
+     */
     @Around("execution(* cn.cuilan.ssmp.*.*Mapper.*(..))")
     public Object pagingGet(ProceedingJoinPoint pjp) {
         try {
@@ -97,7 +117,6 @@ public class MapperAspect {
                 obj = new Page(pageNum, pageSize);
             }
             return obj;
-
         } catch (Throwable throwable) {
             throw new RuntimeException(throwable);
         }

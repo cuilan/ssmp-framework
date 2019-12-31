@@ -16,12 +16,21 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 系统操作日志
+ *
+ * @author zhang.yan
+ * @date 2019-12-31
+ */
 @RestController
 public class SysOperationLogController {
 
     @Resource
     private SysOperationLogService sysOperationLogService;
 
+    /**
+     * 查询系统操作日志
+     */
     @GetMapping("/api/admin/log/query")
     @PreAuthorize("authenticated and hasPermission('log', 'query')")
     public Result getOperationLogs(@RequestParam(value = "uid", required = false) Long sysUserId,
@@ -34,6 +43,7 @@ public class SysOperationLogController {
             endTime = new Date();
         }
         if (startTime == null) {
+            // 默认查询近7天的操作日志
             startTime = DateUtils.addDays(new Date(), -7);
         }
         List<String> authorities = new ArrayList<>();

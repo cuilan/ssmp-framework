@@ -133,7 +133,7 @@ public class Result<T extends Object> {
 
     // 密码不正确
     public static Result<?> wrongPassword() {
-        return new Result<>(WRONG_PASSWORD, "用户不存在", null);
+        return new Result<>(WRONG_PASSWORD, "密码错误", null);
     }
 
     // =====================================================================

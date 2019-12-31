@@ -72,11 +72,16 @@ public class RedisUtils {
      * @return 返回自增后的值
      */
     public Long incr(IRedisPrefix redisPrefix, String key) {
+        String fullKey = redisPrefix.getFullKey(key);
         if (redisPrefix.getType() != RedisDataType.KV) {
             throw new RuntimeException(String.format("Redis key RedisPrefix: %s type is: %s, can not use String-KV.",
                     redisPrefix.getPrefix(), redisPrefix.getType()));
         }
-        return stringRedisTemplate.opsForValue().increment(redisPrefix.getFullKey(key));
+        Long increment = stringRedisTemplate.opsForValue().increment(fullKey);
+        if (redisPrefix.getExpire() > 0) {
+            stringRedisTemplate.expire(fullKey, redisPrefix.getExpire(), redisPrefix.getExpireUnit());
+        }
+        return increment;
     }
 
     /**
@@ -87,8 +92,20 @@ public class RedisUtils {
      * @param seconds     过期时间，单位：秒
      */
     public void expire(IRedisPrefix redisPrefix, String key, final int seconds) {
-        if (seconds > 0) {
-            stringRedisTemplate.expire(redisPrefix.getFullKey(key), seconds, TimeUnit.SECONDS);
+        expire(redisPrefix, key, seconds, TimeUnit.SECONDS);
+    }
+
+    /**
+     * 设置过期时间
+     *
+     * @param redisPrefix IRedisPrefix的实现子类
+     * @param key         String类型，key
+     * @param time        过期时间
+     * @param timeUnit    时间单位
+     */
+    public void expire(IRedisPrefix redisPrefix, String key, final int time, TimeUnit timeUnit) {
+        if (time > 0) {
+            stringRedisTemplate.expire(redisPrefix.getFullKey(key), time, timeUnit);
         }
     }
 
