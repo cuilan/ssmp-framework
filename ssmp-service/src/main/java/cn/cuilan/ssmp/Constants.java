@@ -9,8 +9,13 @@ package cn.cuilan.ssmp;
 public class Constants {
 
     /**
-     * cookie name
+     * prod cookie name
      */
-    public static final String COOKIE_NAME_SYS_USER = "sys_user_token";
+    public static final String ADMIN_COOKIE_NAME = "sys_user_token";
+
+    /**
+     * 非prod环境的cookie name
+     */
+    public final static String TEST_ADMIN_COOKIE_NAME = "UID";
 
 }

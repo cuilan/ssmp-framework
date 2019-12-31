@@ -10,3 +10,9 @@ spring:
     host: 127.0.0.1
     port: 6379
 
+ssmp:
+  # 是否开启权限验证
+  enablePermission: true
+  sysUser:
+    # 系统用户登录次数限制
+    loginTimes: 5

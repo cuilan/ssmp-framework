@@ -1,7 +1,9 @@
 package cn.cuilan.ssmp.utils.encrypt;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
+@Slf4j
 public class RSATest {
 
     @Test
@@ -10,8 +12,8 @@ public class RSATest {
                 "习近平代表第十八届中央委员会向大会作了题为《决胜全面建成小康社会 夺取新时代中国特色社会主义伟大胜利》的报告。" +
                 "习近平指出，这次大会的主题是：不忘初心，牢记使命，高举中国特色社会主义伟大旗帜，决胜全面建成小康社会，夺取新" +
                 "时代中国特色社会主义伟大胜利，为实现中华民族伟大复兴的中国梦不懈奋斗。";
-        String encrypt = RSAEncryptUtils.rsaEncryptToString(src.getBytes());
-        System.out.println(encrypt);
+        String encrypt = RSAUtils.rsaEncryptToString(src.getBytes());
+        log.info("RSA encrypt: {}", encrypt);
     }
 
     @Test
@@ -31,9 +33,9 @@ public class RSATest {
                 "3b7e9d9569a4c8f6598abb9024a5e938a092c072f64a774a3be9f87ee272ee0b09a31d6928a08f29445a06b104c6bd2d" +
                 "d9126e3242496dd84ab83f1b8312da922bb41dd1e";
         long start = System.currentTimeMillis();
-        String src = RSAEncryptUtils.rasDecryptFromString(encrypt);
-        System.out.println(System.currentTimeMillis() - start);
-        System.out.println(src);
+        String src = RSAUtils.rasDecryptFromString(encrypt);
+        log.info("耗时: {}ms", System.currentTimeMillis() - start);
+        log.info("RSA decrypt: {}", src);
     }
 
 }

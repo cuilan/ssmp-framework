@@ -21,7 +21,7 @@ import javax.servlet.http.Cookie;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("dev")
+@ActiveProfiles("test")
 @Slf4j
 @Transactional
 public abstract class BaseMvcTest {
@@ -81,7 +81,7 @@ public abstract class BaseMvcTest {
         }
 
         public Mock token(String token) {
-            requestBuilder.cookie(new Cookie(Constants.COOKIE_NAME_SYS_USER, token));
+            requestBuilder.cookie(new Cookie(Constants.TEST_ADMIN_COOKIE_NAME, token));
             return this;
         }
 

@@ -14,7 +14,7 @@ import java.util.Base64;
 /**
  * AES加密工具类
  */
-public class AES {
+public class AESUtils {
 
     /**
      * 随机生成AES秘钥
@@ -73,7 +73,7 @@ public class AES {
         CheckUtils.notEmpty(data, "data");
         CheckUtils.notEmpty(key, "key");
         if (key.length != 16) {
-            throw new RuntimeException("Invalid AES key length (must be 16 bytes)");
+            throw new RuntimeException("Invalid AESUtils key length (must be 16 bytes)");
         }
         try {
             SecretKeySpec secretKey = new SecretKeySpec(key, EncryptAlgorithm.AES_ALGORITHM);
@@ -120,7 +120,7 @@ public class AES {
         CheckUtils.notEmpty(data, "data");
         CheckUtils.notEmpty(key, "key");
         if (key.length != 16) {
-            throw new RuntimeException("Invalid AES key length (must be 16 bytes)");
+            throw new RuntimeException("Invalid AESUtils key length (must be 16 bytes)");
         }
         try {
             SecretKeySpec secretKey = new SecretKeySpec(key, EncryptAlgorithm.AES_ALGORITHM);
@@ -135,33 +135,5 @@ public class AES {
         } catch (Exception e) {
             throw new RuntimeException("decrypt fail!", e);
         }
-    }
-
-
-    public static String cryptPwd(String src, String key) {
-        char item;
-        char keyItem;
-        int i = 0;
-        int j = 0;
-        int len;
-        char[] destChars = new char[src.length()];
-        char[] srcChars = src.toCharArray();
-        char[] keyChars = key.toCharArray();
-        for (len = src.length(); i < len; i++) {
-            item = srcChars[i];
-            keyItem = keyChars[j];
-            destChars[i] = (char) ((item & 0xF0) + ((item & 0x0F) ^ (keyItem & 0x0F)));
-            j++;
-            if (j >= key.length()) {
-                j = 0;
-            }
-        }
-        return String.valueOf(destChars);
-    }
-
-    public static void main(String[] s) {
-        String key = "abcdef123456";
-        String s2 = cryptPwd("{jn4367237571:", key);
-        System.out.println(s2);
     }
 }

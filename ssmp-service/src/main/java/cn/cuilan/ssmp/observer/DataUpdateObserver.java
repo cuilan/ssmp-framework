@@ -24,9 +24,6 @@ import java.util.concurrent.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-/**
- * @author liudajiang
- */
 @Slf4j
 public abstract class DataUpdateObserver<T extends BaseObservableEntity> implements InitializingBean {
 

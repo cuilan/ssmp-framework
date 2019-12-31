@@ -20,7 +20,7 @@ public class MapperObserverAspect {
     /**
      * 创建实体观察者切面处理
      */
-    @Around("execution(* cn.cuilan.*.*Mapper.insert(..))")
+    @Around("execution(* cn.cuilan.ssmp.*.*Mapper.insert(..))")
     public Object interceptInsert(ProceedingJoinPoint pjp) throws Throwable {
         Object entity = pjp.getArgs()[0];
         if (!(entity instanceof BaseObservableEntity)) {
@@ -59,7 +59,7 @@ public class MapperObserverAspect {
     /**
      * 更新实体观察者切面处理
      */
-    @Around("execution(* cn.cuilan.*.*Mapper.update*(..))")
+    @Around("execution(* cn.cuilan.ssmp.*.*Mapper.update*(..))")
     public Object interceptUpdateById(ProceedingJoinPoint pjp) throws Throwable {
         Object args = pjp.getArgs()[0];
         if (!(args instanceof BaseObservableEntity)) {
@@ -82,7 +82,7 @@ public class MapperObserverAspect {
     /**
      * 删除实体观察者切面处理
      */
-    @Around("execution(* cn.cuilan.*.*Mapper.delete*(..))")
+    @Around("execution(* cn.cuilan.ssmp.*.*Mapper.delete*(..))")
     public Object interceptDelete(ProceedingJoinPoint pjp) throws Throwable {
         Object args = pjp.getArgs()[0];
         if (!(args instanceof BaseObservableEntity)) {

@@ -27,15 +27,15 @@ public class AESTest {
 
     @Test
     public void testGenerateRandomKeyWithBase64() {
-        String keyWithBase64 = AES.generateRandomKeyWithBase64();
-        log.info("Generate AES key with Base64: {}", keyWithBase64);
+        String keyWithBase64 = AESUtils.generateRandomKeyWithBase64();
+        log.info("Generate AESUtils key with Base64: {}", keyWithBase64);
     }
 
     @Test
     public void testEncryptWithKeyBase64() {
-        log.info("Generate AES key with Base64: {}", key);
+        log.info("Generate AESUtils key with Base64: {}", key);
         // 加密
-        encryptData = AES.encryptWithKeyBase64(data, key);
+        encryptData = AESUtils.encryptWithKeyBase64(data, key);
         log.info("data: {}", data);
         log.info("Encrypt to Base64: {}", encryptData);
     }
@@ -43,7 +43,7 @@ public class AESTest {
     @Test
     public void testDecryptWithKeyBase64() {
         // 解密
-        String sourceData = AES.decryptWithKeyBase64(encryptData, key);
+        String sourceData = AESUtils.decryptWithKeyBase64(encryptData, key);
         log.info("Decrypt data: {}", sourceData);
     }
 

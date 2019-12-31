@@ -13,6 +13,16 @@ public class EncryptAlgorithm {
     public static final String CHAR_ENCODING = "UTF-8";
 
     /**
+     * MD5信息摘要算法
+     */
+    public static final String MD5_ALGORITHM = "MD5";
+
+    /**
+     * SHA-256
+     */
+    public static final String SHA_256_ALGORITHM = "SHA-256";
+
+    /**
      * AES对称加密算法
      */
     public static final String AES_ALGORITHM = "AES";

@@ -13,22 +13,22 @@ import java.util.Map;
 public class Result<T extends Object> {
 
     // 成功
-    private final static Code SUCCESS = new Code(200);
+    public final static Code SUCCESS = new Code(200);
 
     // 失败
     public final static Code FAIL = new Code(400);
 
     // 未认证
-    private final static Code NO_AUTH = new Code(401);
+    public final static Code NO_AUTH = new Code(401);
 
     // 无权限
-    private final static Code NO_PERMISSION = new Code(402);
+    public final static Code NO_PERMISSION = new Code(402);
 
     // 用户不存在
-    private final static Code USER_NOT_FOUND = new Code(403);
+    public final static Code USER_NOT_FOUND = new Code(403);
 
     // 密码不正确
-    private final static Code WRONG_PASSWORD = new Code(404);
+    public final static Code WRONG_PASSWORD = new Code(404);
 
     // 错误码
     private Integer code;

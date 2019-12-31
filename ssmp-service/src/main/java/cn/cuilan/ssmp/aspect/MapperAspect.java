@@ -21,7 +21,7 @@ public class MapperAspect {
     private static final String PAGE_NUM = "pageNum";
     private static final String PAGE_SIZE = "pageSize";
 
-    @Around("execution(* cn.cuilan.*.*Mapper.insert(..))")
+    @Around("execution(* cn.cuilan.ssmp.*.*Mapper.insert(..))")
     public Object insert(ProceedingJoinPoint pjp) {
         try {
             Object arg = pjp.getArgs()[0];
@@ -41,7 +41,7 @@ public class MapperAspect {
         }
     }
 
-    @Around("execution(* cn.cuilan.*.*Mapper.update*(..))")
+    @Around("execution(* cn.cuilan.ssmp.*.*Mapper.update*(..))")
     public Object update(ProceedingJoinPoint pjp) {
         try {
             MethodSignature methodSignature = (MethodSignature) pjp.getSignature();
@@ -64,7 +64,7 @@ public class MapperAspect {
 
     }
 
-    @Around("execution(* cn.cuilan.*.*Mapper.*(..))")
+    @Around("execution(* cn.cuilan.ssmp.*.*Mapper.*(..))")
     public Object pagingGet(ProceedingJoinPoint pjp) {
         try {
             MethodSignature methodSignature = (MethodSignature) pjp.getSignature();

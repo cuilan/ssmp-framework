@@ -1,6 +1,7 @@
 package cn.cuilan.ssmp.admin.config;
 
 import cn.cuilan.ssmp.admin.annotation.IPArgumentResolver;
+import cn.cuilan.ssmp.admin.annotation.LoginUserArgumentResolver;
 import cn.cuilan.ssmp.exception.handler.BaseExceptionResolver;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -22,6 +23,9 @@ public class MVCConfig implements WebMvcConfigurer {
 
     @Resource
     private IPArgumentResolver ipArgumentResolver;
+
+    @Resource
+    private LoginUserArgumentResolver loginUserArgumentResolver;
 
     /**
      * 统一输出编码
@@ -49,6 +53,8 @@ public class MVCConfig implements WebMvcConfigurer {
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         // IP注解解析器
         resolvers.add(ipArgumentResolver);
+        // Logined注解解析器
+        resolvers.add(loginUserArgumentResolver);
     }
 
     @Override

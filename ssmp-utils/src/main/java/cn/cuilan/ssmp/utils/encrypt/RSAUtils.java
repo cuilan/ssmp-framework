@@ -22,12 +22,7 @@ import java.util.Map;
  * RSA非对称加密
  */
 @Slf4j
-public class RSAEncryptUtils {
-
-    /**
-     * 加密算法RSA
-     */
-    private static final String RSA_ALGORITHM = "RSA";
+public class RSAUtils {
 
     /**
      * 公钥名称
@@ -91,7 +86,7 @@ public class RSAEncryptUtils {
         KeyFactory kf;
         RSAPublicKey publicKey = null;
         try {
-            kf = KeyFactory.getInstance(RSA_ALGORITHM);
+            kf = KeyFactory.getInstance(EncryptAlgorithm.RSA_ALGORITHM);
             publicKey = (RSAPublicKey) kf.generatePublic(spec);
         } catch (Exception e) {
             log.error(String.format("RSAEncryptUtils error: %s", e.getMessage()), e);
@@ -108,7 +103,7 @@ public class RSAEncryptUtils {
         KeyFactory kf;
         RSAPrivateKey privateKey = null;
         try {
-            kf = KeyFactory.getInstance(RSA_ALGORITHM);
+            kf = KeyFactory.getInstance(EncryptAlgorithm.RSA_ALGORITHM);
             privateKey = (RSAPrivateKey) kf.generatePrivate(spec);
         } catch (Exception e) {
             log.error(String.format("RSAEncryptUtils error: %s", e.getMessage()), e);
@@ -130,7 +125,7 @@ public class RSAEncryptUtils {
         byte[] encryptedData = null;
         ByteArrayOutputStream out = null;
         try {
-            Cipher cipher = Cipher.getInstance(RSA_ALGORITHM);
+            Cipher cipher = Cipher.getInstance(EncryptAlgorithm.RSA_ALGORITHM);
             cipher.init(Cipher.ENCRYPT_MODE, pubKey);
             int inputLen = data.length;
             out = new ByteArrayOutputStream();
@@ -176,7 +171,7 @@ public class RSAEncryptUtils {
         byte[] decryptData = null;
         ByteArrayOutputStream out = null;
         try {
-            Cipher cipher = Cipher.getInstance(RSA_ALGORITHM);
+            Cipher cipher = Cipher.getInstance(EncryptAlgorithm.RSA_ALGORITHM);
             cipher.init(Cipher.DECRYPT_MODE, privateKey);
             int inputLen = data.length;
             out = new ByteArrayOutputStream();
