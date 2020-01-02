@@ -97,12 +97,12 @@ CREATE TABLE `t_sys_permission`
 CREATE TABLE `t_sys_user_roles`
 (
     `roles_id`   bigint(20) NOT NULL,
-    `sys_userId` bigint(20) NOT NULL
+    `sys_user_id` bigint(20) NOT NULL
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8 COMMENT ='用户和角色关联表';
 -- 联合唯一索引
 ALTER TABLE `t_sys_user_roles`
-    ADD UNIQUE INDEX (`roles_id`, `sys_userId`);
+    ADD UNIQUE INDEX (`roles_id`, `sys_user_id`);
 
 
 -- 权限角色关联表

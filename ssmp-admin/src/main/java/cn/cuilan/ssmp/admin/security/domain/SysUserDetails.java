@@ -54,14 +54,12 @@ public class SysUserDetails extends SysUser implements UserDetails {
         // 获取并设置角色和权限
         if (this.roles != null && (this.roles).size() > 0) {
             for (SysRole sysRole : this.roles) {
-                // TODO
-                //auths.add(new SimpleGrantedAuthority(sysRole.getName()));
+                auths.add(new SimpleGrantedAuthority(sysRole.getName()));
             }
         }
         if (this.permissions != null && (this.permissions).size() > 0) {
             for (SysPermission sysPermission : this.permissions) {
-                // TODO
-                //auths.add(new SimpleGrantedAuthority(sysPermission.getName()));
+                auths.add(new SimpleGrantedAuthority(sysPermission.getName()));
             }
         }
         return auths;

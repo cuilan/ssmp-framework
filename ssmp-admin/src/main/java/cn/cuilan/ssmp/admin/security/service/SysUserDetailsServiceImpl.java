@@ -14,6 +14,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
@@ -94,5 +96,23 @@ public class SysUserDetailsServiceImpl extends SysUserService implements UserDet
      */
     private void incrLoginErrorCount(String username) {
         redisUtils.incr(SysUserRedisPrefix.LOGIN_ERROR, username);
+    }
+
+    /**
+     * 修改密码
+     *
+     * @param sysUser 系统用户
+     * @param oldPass 旧密码
+     * @param newPass 新密码
+     */
+    @Transactional
+    public void resetPassword(SysUser sysUser, String oldPass, String newPass) {
+        SysUser dbUser = sysUserMapper.selectById(sysUser.getId());
+        Assert.isTrue(bCryptPasswordEncoder.matches(oldPass, dbUser.getPassword()), "旧密码不正确");
+
+        dbUser.setPassword(bCryptPasswordEncoder.encode(newPass));
+        // 临时密码作废
+        dbUser.setTrashTmpPwd(true);
+        sysUserMapper.updateById(dbUser);
     }
 }

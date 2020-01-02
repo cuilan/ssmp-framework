@@ -1,5 +1,6 @@
 package cn.cuilan.ssmp.admin.config;
 
+import cn.cuilan.ssmp.admin.beans.AdminInitializingBean;
 import cn.cuilan.ssmp.admin.security.CurrentLoginUserGetter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -24,5 +25,10 @@ public class BeanConfig {
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AdminInitializingBean adminInitializingBean() {
+        return new AdminInitializingBean();
     }
 }

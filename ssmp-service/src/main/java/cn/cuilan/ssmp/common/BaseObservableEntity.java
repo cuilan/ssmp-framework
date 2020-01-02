@@ -9,7 +9,7 @@ import java.io.Serializable;
  * @author zhang.yan
  * @date 2019-12-31
  */
-public abstract class BaseObservableEntity<ID extends Serializable> implements Cloneable {
+public abstract class BaseObservableEntity<ID extends Serializable> implements Observable, Cloneable {
 
     /**
      * 实体ID的 get 方法
