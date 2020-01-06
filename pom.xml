@@ -13,6 +13,7 @@
     <modules>
         <module>base</module>
         <module>ssmp-admin</module>
+        <module>ssmp-app</module>
         <module>ssmp-service</module>
         <module>ssmp-utils</module>
     </modules>
