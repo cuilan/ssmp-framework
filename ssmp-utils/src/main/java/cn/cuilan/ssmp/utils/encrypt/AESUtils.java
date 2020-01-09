@@ -43,6 +43,16 @@ public class AESUtils {
         return key.getEncoded();
     }
 
+    /**
+     * 将Base64 key转为byte数组
+     *
+     * @param key Base64编码的key
+     * @return 返回byte数组
+     */
+    public static byte[] base64DecodeKey(String key) {
+        return Base64.getDecoder().decode(key);
+    }
+
     // ===================================================================================
 
     /**
