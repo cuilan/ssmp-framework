@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,7 +24,7 @@ public class SysUserDetails extends SysUser implements UserDetails {
 
     public SysUserDetails(SysUser sysUser) {
         if (sysUser == null) {
-            throw new BaseException("未找到该用户");
+            throw new UsernameNotFoundException("未找到该用户");
         }
         this.id = sysUser.getId();
         this.phone = sysUser.getPhone();
