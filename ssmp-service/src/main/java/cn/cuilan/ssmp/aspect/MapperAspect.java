@@ -41,7 +41,7 @@ public class MapperAspect {
             if (!(arg instanceof BaseIdTimeEntity)) {
                 return pjp.proceed(pjp.getArgs());
             }
-            BaseIdTimeEntity entity = (BaseIdTimeEntity) arg;
+            BaseIdTimeEntity<?> entity = (BaseIdTimeEntity<?>) arg;
             if (entity.getCreateTime() == null) {
                 Long now = System.currentTimeMillis();
                 entity.setCreateTime(now);
@@ -69,7 +69,7 @@ public class MapperAspect {
             if (!(arg instanceof BaseIdTimeEntity)) {
                 return pjp.proceed(pjp.getArgs());
             }
-            BaseIdTimeEntity entity = (BaseIdTimeEntity) arg;
+            BaseIdTimeEntity<?> entity = (BaseIdTimeEntity<?>) arg;
             if (entity.getUpdateTime() == null) {
                 entity.setUpdateTime(System.currentTimeMillis());
             }
@@ -114,6 +114,7 @@ public class MapperAspect {
             PageHelper.startPage(pageNum, pageSize);
             Object obj = pjp.proceed(pjp.getArgs());
             if (obj == null) {
+                // noinspection rawtypes
                 obj = new Page(pageNum, pageSize);
             }
             return obj;

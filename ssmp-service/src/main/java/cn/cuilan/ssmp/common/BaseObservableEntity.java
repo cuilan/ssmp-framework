@@ -19,9 +19,10 @@ public abstract class BaseObservableEntity<ID extends Serializable> implements O
     public abstract ID getId();
 
     @Override
-    protected BaseObservableEntity clone() throws CloneNotSupportedException {
+    protected BaseObservableEntity<ID> clone() throws CloneNotSupportedException {
         try {
-            return (BaseObservableEntity) super.clone();
+            // noinspection unchecked
+            return (BaseObservableEntity<ID>) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
