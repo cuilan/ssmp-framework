@@ -2,8 +2,10 @@ package cn.cuilan.ssmp.utils.encrypt;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 @Slf4j
 public class SHA256Test {
 

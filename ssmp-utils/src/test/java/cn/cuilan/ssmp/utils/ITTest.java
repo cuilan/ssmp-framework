@@ -3,8 +3,10 @@ package cn.cuilan.ssmp.utils;
 import cn.cuilan.ssmp.utils.encrypt.AESUtils;
 import cn.cuilan.ssmp.utils.encrypt.RSAUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 @Slf4j
 public class ITTest {
 

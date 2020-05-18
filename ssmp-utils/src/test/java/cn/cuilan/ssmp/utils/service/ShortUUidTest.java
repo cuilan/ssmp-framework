@@ -1,8 +1,10 @@
 package cn.cuilan.ssmp.utils.service;
 
 import cn.cuilan.ssmp.utils.ShortUUid;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class ShortUUidTest {
 
     @Test
