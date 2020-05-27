@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 @Mapper
-public interface UserMapper extends BaseMapper<User> {
+public interface UserMapper extends CachedMapper<User> {
 
     /**
      * 根据用户名称查询用户

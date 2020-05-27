@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
  */
 public interface IRedisPrefix {
 
-    String APP = "ssmp_";
+    String APP = "ssmp";
 
     /**
      * 获取前缀
@@ -43,6 +43,6 @@ public interface IRedisPrefix {
      * @return 全名称
      */
     default String getFullKey(String key) {
-        return APP + getNamespace() + ":" + getPrefix() + ":" + key;
+        return APP + ":" + getNamespace() + ":" + getPrefix() + ":" + key;
     }
 }

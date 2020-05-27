@@ -19,7 +19,7 @@ public abstract class AdminApplicationTests {
 
     @BeforeEach
     public void setUpTests() {
-        user = userService.getNotNull(1L);
+//        user = userService.getNotNull(1L);
     }
 
 }

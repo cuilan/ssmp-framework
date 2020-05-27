@@ -20,5 +20,5 @@ public enum RedisDataType {
     SET,
 
     // sorted-set
-    ZSET
+    ZSET;
 }

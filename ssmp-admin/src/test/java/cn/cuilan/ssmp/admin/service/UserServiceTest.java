@@ -26,4 +26,10 @@ public class UserServiceTest extends AdminApplicationTests {
         Assert.assertNotNull(user);
     }
 
+    @Test
+    @DisplayName("测试批量插入，验证AOP增强，是否加入缓存")
+    public void testSaveAll() {
+        userService.saveAll();
+    }
+
 }

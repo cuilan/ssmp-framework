@@ -1,16 +1,27 @@
 package cn.cuilan.ssmp.aspect;
 
+import cn.cuilan.ssmp.common.BaseIdEntity;
 import cn.cuilan.ssmp.common.BaseIdTimeEntity;
 import cn.cuilan.ssmp.exception.BaseException;
+import com.baomidou.mybatisplus.core.enums.SqlMethod;
+import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.SqlSession;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * AOP 环绕通知，Mapper 层方法增强
@@ -121,5 +132,34 @@ public class MapperAspect {
         } catch (Throwable throwable) {
             throw new RuntimeException(throwable);
         }
+    }
+
+    /**
+     * 增强 Mapper，提供批量插入的能力
+     */
+    @SuppressWarnings("unchecked")
+    @Around("execution(* cn.cuilan.ssmp.mapper.CommonMapper.saveBatch(..))")
+    public Object saveBatch(ProceedingJoinPoint pjp) {
+        Object arg = pjp.getArgs()[0];
+        List<BaseIdEntity<Long>> entityList = new ArrayList<>((Collection<? extends BaseIdEntity<Long>>) arg);
+        if (entityList.size() == 0) {
+            throw new RuntimeException("saveBatch 参数 Collection 不能为空.");
+        }
+        Class<?> clazz = entityList.get(0).getClass();
+
+        int batchSize = 1000;
+        String sqlStatement = SqlHelper.table(clazz).getSqlStatement(SqlMethod.INSERT_ONE.getMethod());
+        try (SqlSession batchSqlSession = SqlHelper.sqlSessionBatch(clazz)) {
+            int i = 0;
+            for (BaseIdEntity<Long> anEntityList : entityList) {
+                batchSqlSession.insert(sqlStatement, anEntityList);
+                if (i >= 1 && i % batchSize == 0) {
+                    batchSqlSession.flushStatements();
+                }
+                i++;
+            }
+            batchSqlSession.flushStatements();
+        }
+        return true;
     }
 }
