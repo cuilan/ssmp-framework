@@ -1,26 +1,37 @@
 package cn.cuilan.ssmp.aspect;
 
+import cn.cuilan.ssmp.annotation.RedisCached;
 import cn.cuilan.ssmp.common.BaseIdEntity;
 import cn.cuilan.ssmp.common.BaseIdTimeEntity;
 import cn.cuilan.ssmp.exception.BaseException;
+import cn.cuilan.ssmp.mapper.CachedMapper;
+import cn.cuilan.ssmp.redis.EntityRedisPrefix;
+import cn.cuilan.ssmp.redis.RedisUtils;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.session.SqlSession;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -33,6 +44,7 @@ import java.util.List;
  * @author zhang.yan
  * @date 2019-12-31
  */
+@Slf4j
 @Aspect
 public class MapperAspect {
 
@@ -41,6 +53,9 @@ public class MapperAspect {
 
     // 分页大小
     private static final String PAGE_SIZE = "pageSize";
+
+    @Autowired
+    private RedisUtils redisUtils;
 
     /**
      * AOP环绕通知，Mapper insert方法，默认插入时添加创建时间、更新时间
@@ -134,32 +149,125 @@ public class MapperAspect {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    @Around("execution(* cn.cuilan.ssmp.*.*Mapper.selectCacheById(..))")
+    public Object selectByIdCached(ProceedingJoinPoint pjp) {
+        try {
+            Object arg = pjp.getArgs()[0];
+            Long id = (Long) arg;
+
+            Class<CachedMapper<?>> mapperClass = (Class<CachedMapper<?>>) pjp.getTarget().getClass().getGenericInterfaces()[0];
+            Class<BaseIdEntity<?>> entityClass = (Class<BaseIdEntity<?>>) ((ParameterizedType) mapperClass.getGenericInterfaces()[0]).getActualTypeArguments()[0];
+
+            RedisCached redisCached = entityClass.getAnnotation(RedisCached.class);
+            if (redisCached == null) {
+                return pjp.proceed(pjp.getArgs());
+            }
+
+            EntityRedisPrefix key = redisCached.value();
+            String value = redisUtils.getString(key, id.toString());
+            if (StringUtils.isNotBlank(value)) {
+                JSONObject json = JSON.parseObject(value);
+                return json.toJavaObject(entityClass);
+            }
+
+            Method selectById = BaseMapper.class.getDeclaredMethod("selectById", Serializable.class);
+            BaseIdEntity<?> entity = (BaseIdEntity<?>) selectById.invoke(pjp.getTarget(), id);
+            redisUtils.saveString(key, id.toString(), JSON.toJSONString(entity));
+            return entity;
+        } catch (Throwable throwable) {
+            throw new RuntimeException(throwable);
+        }
+    }
+
     /**
      * 增强 Mapper，提供批量插入的能力
      */
-    @SuppressWarnings("unchecked")
     @Around("execution(* cn.cuilan.ssmp.mapper.CommonMapper.saveBatch(..))")
     public Object saveBatch(ProceedingJoinPoint pjp) {
-        Object arg = pjp.getArgs()[0];
-        List<BaseIdEntity<Long>> entityList = new ArrayList<>((Collection<? extends BaseIdEntity<Long>>) arg);
-        if (entityList.size() == 0) {
-            throw new RuntimeException("saveBatch 参数 Collection 不能为空.");
-        }
-        Class<?> clazz = entityList.get(0).getClass();
+        return batchOperation(pjp);
+    }
 
-        int batchSize = 1000;
-        String sqlStatement = SqlHelper.table(clazz).getSqlStatement(SqlMethod.INSERT_ONE.getMethod());
-        try (SqlSession batchSqlSession = SqlHelper.sqlSessionBatch(clazz)) {
-            int i = 0;
-            for (BaseIdEntity<Long> anEntityList : entityList) {
-                batchSqlSession.insert(sqlStatement, anEntityList);
-                if (i >= 1 && i % batchSize == 0) {
-                    batchSqlSession.flushStatements();
-                }
-                i++;
+    // 批量更新
+    @Around("execution(* cn.cuilan.ssmp.mapper.CommonMapper.updateBatchById(..))")
+    public Object updateBatchById(ProceedingJoinPoint pjp) {
+        return batchOperation(pjp);
+    }
+
+    // 批量更新或插入
+    @Around("execution(* cn.cuilan.ssmp.mapper.CommonMapper.saveOrUpdateBatch(..))")
+    public Object saveOrUpdateBatch(ProceedingJoinPoint pjp) {
+        return batchOperation(pjp);
+    }
+
+    // 批量操作
+    public boolean batchOperation(ProceedingJoinPoint pjp) {
+        try {
+            MethodSignature methodSignature = (MethodSignature) pjp.getSignature();
+            String methodName = methodSignature.getMethod().getName();
+            // 是否为批量更新操作
+            boolean isUpdateMethod = false;
+            if ("saveOrUpdateBatch".equals(methodName) || "updateBatchById".equals(methodName)) {
+                isUpdateMethod = true;
             }
-            batchSqlSession.flushStatements();
+
+            Object[] args = pjp.getArgs();
+            Object arg = args[0];
+            // 批量操作默认大小
+            int batchSize = 1000;
+            if (args.length == 2) {
+                batchSize = (int) args[1];
+            }
+            if (!(arg instanceof Collection)) {
+                throw new RuntimeException("批量操作失败，参数不正确");
+            }
+            Collection<?> c = (Collection<?>) arg;
+            if (c.size() <= 0) {
+                throw new RuntimeException("批量操作失败，参数不正确");
+            }
+            List<BaseIdEntity<?>> entityList = new ArrayList(c);
+            Class<?> clazz = entityList.get(0).getClass();
+            try (SqlSession batchSqlSession = SqlHelper.sqlSessionBatch(clazz)) {
+                int i = 0;
+                for (BaseIdEntity<?> entity : entityList) {
+                    if (!(entity instanceof BaseIdTimeEntity)) {
+                        continue;
+                    }
+                    BaseIdTimeEntity<?> timeEntity = (BaseIdTimeEntity<?>) entity;
+                    Long now = System.currentTimeMillis();
+                    if (isUpdateMethod) {
+                        timeEntity.setUpdateTime(now);
+                        MapperMethod.ParamMap<BaseIdEntity<?>> param = new MapperMethod.ParamMap<>();
+                        param.put(Constants.ENTITY, timeEntity);
+                        batchSqlSession.update(SqlHelper.table(clazz).getSqlStatement(SqlMethod.UPDATE_BY_ID.getMethod()), param);
+                    } else {
+                        if (timeEntity.getCreateTime() == null) {
+                            timeEntity.setCreateTime(now);
+                            timeEntity.setUpdateTime(now);
+                        }
+                        batchSqlSession.insert(SqlHelper.table(clazz).getSqlStatement(SqlMethod.INSERT_ONE.getMethod()), timeEntity);
+                    }
+                    if (i >= 1 && i % batchSize == 0) {
+                        batchSqlSession.flushStatements();
+                    }
+                    i++;
+                }
+                batchSqlSession.flushStatements();
+            }
+            log.info("CommonMapper<{}> {} 批量操作, size: {}", clazz.getSimpleName(), methodName, entityList.size());
+
+            // 更新缓存
+            if (clazz.getAnnotation(RedisCached.class) != null) {
+                EntityRedisPrefix key = clazz.getAnnotation(RedisCached.class).value();
+                for (Object obj : c) {
+                    BaseIdTimeEntity<?> entity = (BaseIdTimeEntity<?>) obj;
+                    redisUtils.deleteKey(key, entity.getId().toString());
+                    redisUtils.saveString(key, entity.getId().toString(), JSON.toJSONString(entity));
+                }
+            }
+            return true;
+        } catch (Throwable throwable) {
+            throw new RuntimeException(throwable);
         }
-        return true;
     }
 }
