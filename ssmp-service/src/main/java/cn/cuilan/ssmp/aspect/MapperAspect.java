@@ -3,7 +3,6 @@ package cn.cuilan.ssmp.aspect;
 import cn.cuilan.ssmp.annotation.RedisCached;
 import cn.cuilan.ssmp.common.BaseIdEntity;
 import cn.cuilan.ssmp.common.BaseIdTimeEntity;
-import cn.cuilan.ssmp.exception.BaseException;
 import cn.cuilan.ssmp.mapper.CachedMapper;
 import cn.cuilan.ssmp.redis.EntityRedisPrefix;
 import cn.cuilan.ssmp.redis.RedisUtils;
@@ -32,6 +31,7 @@ import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -134,7 +134,7 @@ public class MapperAspect {
             }
             // 页码从1开始，数据库中从0开始
             if (pageNum - 1 < 0) {
-                throw new BaseException("页码必须从1开始");
+                throw new RuntimeException("页码必须从1开始");
             }
             // 仅在需要分页的查询方法之前调用静态方法 startPage, 之后的一个查询方法将会被分页
             PageHelper.startPage(pageNum, pageSize);
@@ -149,32 +149,56 @@ public class MapperAspect {
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Around("execution(* cn.cuilan.ssmp.*.*Mapper.selectCacheById(..))")
-    public Object selectByIdCached(ProceedingJoinPoint pjp) {
+    public Object selectCacheById(ProceedingJoinPoint pjp) {
+        List<BaseIdEntity<?>> entityList = getFromCache(pjp);
+        if (entityList == null || entityList.size() == 0) {
+            return null;
+        }
+        return entityList.get(0);
+    }
+
+    @Around("execution(* cn.cuilan.ssmp.*.*Mapper.selectCacheByIds(..))")
+    public Object selectCacheByIds(ProceedingJoinPoint pjp) {
+        return getFromCache(pjp);
+    }
+
+    /**
+     * 从缓存中批量获取
+     */
+    @SuppressWarnings("unchecked")
+    public List<BaseIdEntity<?>> getFromCache(ProceedingJoinPoint pjp) {
         try {
             Object arg = pjp.getArgs()[0];
-            Long id = (Long) arg;
+            List<Long> ids;
+            if (arg instanceof Long) {
+                ids = Collections.singletonList((Long) arg);
+            } else {
+                ids = (List<Long>) arg;
+            }
 
             Class<CachedMapper<?>> mapperClass = (Class<CachedMapper<?>>) pjp.getTarget().getClass().getGenericInterfaces()[0];
-            Class<BaseIdEntity<?>> entityClass = (Class<BaseIdEntity<?>>) ((ParameterizedType) mapperClass.getGenericInterfaces()[0]).getActualTypeArguments()[0];
+            Class<BaseIdEntity<?>> entityClass = (Class<BaseIdEntity<?>>) ((ParameterizedType) mapperClass
+                    .getGenericInterfaces()[0]).getActualTypeArguments()[0];
 
             RedisCached redisCached = entityClass.getAnnotation(RedisCached.class);
             if (redisCached == null) {
-                return pjp.proceed(pjp.getArgs());
+                throw new RuntimeException(entityClass.getName() + " 不支持缓存操作");
             }
-
             EntityRedisPrefix key = redisCached.value();
-            String value = redisUtils.getString(key, id.toString());
-            if (StringUtils.isNotBlank(value)) {
-                JSONObject json = JSON.parseObject(value);
-                return json.toJavaObject(entityClass);
+            List<BaseIdEntity<?>> entityList = new ArrayList<>();
+            for (Long id : ids) {
+                String value = redisUtils.getString(key, id.toString());
+                if (StringUtils.isNotBlank(value)) {
+                    entityList.add(JSON.parseObject(value).toJavaObject(entityClass));
+                    continue;
+                }
+                // 缓存中未找到，查询一次数据库
+                Method selectById = BaseMapper.class.getDeclaredMethod("selectById", Serializable.class);
+                BaseIdEntity<?> entity = (BaseIdEntity<?>) selectById.invoke(pjp.getTarget(), id);
+                redisUtils.saveString(key, id.toString(), JSON.toJSONString(entity));
             }
-
-            Method selectById = BaseMapper.class.getDeclaredMethod("selectById", Serializable.class);
-            BaseIdEntity<?> entity = (BaseIdEntity<?>) selectById.invoke(pjp.getTarget(), id);
-            redisUtils.saveString(key, id.toString(), JSON.toJSONString(entity));
-            return entity;
+            return entityList;
         } catch (Throwable throwable) {
             throw new RuntimeException(throwable);
         }
@@ -200,7 +224,9 @@ public class MapperAspect {
         return batchOperation(pjp);
     }
 
-    // 批量操作
+    /**
+     * 批量操作
+     */
     public boolean batchOperation(ProceedingJoinPoint pjp) {
         try {
             MethodSignature methodSignature = (MethodSignature) pjp.getSignature();
@@ -230,22 +256,26 @@ public class MapperAspect {
             try (SqlSession batchSqlSession = SqlHelper.sqlSessionBatch(clazz)) {
                 int i = 0;
                 for (BaseIdEntity<?> entity : entityList) {
-                    if (!(entity instanceof BaseIdTimeEntity)) {
-                        continue;
-                    }
-                    BaseIdTimeEntity<?> timeEntity = (BaseIdTimeEntity<?>) entity;
                     Long now = System.currentTimeMillis();
                     if (isUpdateMethod) {
-                        timeEntity.setUpdateTime(now);
+                        if (entity instanceof BaseIdTimeEntity) {
+                            BaseIdTimeEntity<?> timeEntity = (BaseIdTimeEntity<?>) entity;
+                            timeEntity.setUpdateTime(now);
+                            entity = timeEntity;
+                        }
                         MapperMethod.ParamMap<BaseIdEntity<?>> param = new MapperMethod.ParamMap<>();
-                        param.put(Constants.ENTITY, timeEntity);
+                        param.put(Constants.ENTITY, entity);
                         batchSqlSession.update(SqlHelper.table(clazz).getSqlStatement(SqlMethod.UPDATE_BY_ID.getMethod()), param);
                     } else {
-                        if (timeEntity.getCreateTime() == null) {
-                            timeEntity.setCreateTime(now);
-                            timeEntity.setUpdateTime(now);
+                        if (entity instanceof BaseIdTimeEntity) {
+                            BaseIdTimeEntity<?> timeEntity = (BaseIdTimeEntity<?>) entity;
+                            if (timeEntity.getCreateTime() == null) {
+                                timeEntity.setCreateTime(now);
+                                timeEntity.setUpdateTime(now);
+                            }
+                            entity = timeEntity;
                         }
-                        batchSqlSession.insert(SqlHelper.table(clazz).getSqlStatement(SqlMethod.INSERT_ONE.getMethod()), timeEntity);
+                        batchSqlSession.insert(SqlHelper.table(clazz).getSqlStatement(SqlMethod.INSERT_ONE.getMethod()), entity);
                     }
                     if (i >= 1 && i % batchSize == 0) {
                         batchSqlSession.flushStatements();

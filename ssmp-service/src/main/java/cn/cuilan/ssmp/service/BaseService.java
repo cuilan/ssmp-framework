@@ -20,6 +20,8 @@ import java.util.Collection;
 @Service
 public abstract class BaseService<M extends BaseMapper<T>, T> extends ServiceImpl<M, T> {
 
+    private static final int BATCH_SIZE = 1000;
+
     /**
      * 根据id查询实体
      *
@@ -40,11 +42,10 @@ public abstract class BaseService<M extends BaseMapper<T>, T> extends ServiceImp
      * @param id Long类型id
      * @return 返回实体T
      */
-    public T getNotNullCache(Long id) {
-        if (!(baseMapper instanceof CachedMapper)) {
-            throw new BaseException(baseMapper.getClass().getSimpleName() + "Mapper 未继承 CachedMapper.");
-        }
-        T t = ((CachedMapper<T>) baseMapper).selectByIdCached(id);
+    public T getCache(Long id) {
+        supportCachedOperation();
+        // noinspection unchecked
+        T t = ((CachedMapper<T>) baseMapper).selectCacheById(id);
         if (t == null) {
             throw new BaseException("id not exist.");
         }
@@ -53,40 +54,55 @@ public abstract class BaseService<M extends BaseMapper<T>, T> extends ServiceImp
 
     @Override
     public boolean saveBatch(Collection<T> entityList) {
-        return this.saveBatch(entityList, 1000);
+        return this.saveBatch(entityList, BATCH_SIZE);
     }
 
     @Override
     public boolean saveBatch(Collection<T> entityList, int batchSize) {
-        checkClassType();
+        supportBatchOperation();
+        // noinspection unchecked
         return ((CommonMapper<T>) baseMapper).saveBatch(entityList, batchSize);
     }
 
     @Override
     public boolean updateBatchById(Collection<T> entityList) {
-        return this.updateBatchById(entityList, 1000);
+        return this.updateBatchById(entityList, BATCH_SIZE);
     }
 
     @Override
     public boolean updateBatchById(Collection<T> entityList, int batchSize) {
-        checkClassType();
+        supportBatchOperation();
+        // noinspection unchecked
         return ((CommonMapper<T>) baseMapper).updateBatchById(entityList, batchSize);
     }
 
     @Override
     public boolean saveOrUpdateBatch(Collection<T> entityList) {
-        return this.saveOrUpdateBatch(entityList, 1000);
+        return this.saveOrUpdateBatch(entityList, BATCH_SIZE);
     }
 
     @Override
     public boolean saveOrUpdateBatch(Collection<T> entityList, int batchSize) {
-        checkClassType();
+        supportBatchOperation();
+        // noinspection unchecked
         return ((CommonMapper<T>) baseMapper).saveOrUpdateBatch(entityList, batchSize);
     }
 
-    private void checkClassType() {
+    /**
+     * 检查类型，仅 CommonMapper 具备批量操作的能力
+     */
+    private void supportBatchOperation() {
         if (!(baseMapper instanceof CommonMapper)) {
-            throw new BaseException("未继承 CommonMapper, 不支持批量操作");
+            throw new BaseException(baseMapper.getClass().getSimpleName() + "Mapper 未继承 CommonMapper, 不支持批量操作");
+        }
+    }
+
+    /**
+     * 检查类型，仅 CachedMapper 具备缓存操作的能力
+     */
+    private void supportCachedOperation() {
+        if (!(baseMapper instanceof CachedMapper)) {
+            throw new BaseException(baseMapper.getClass().getSimpleName() + "Mapper 未继承 CachedMapper, 不支持缓存操作");
         }
     }
 }
