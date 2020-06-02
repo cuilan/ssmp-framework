@@ -34,9 +34,6 @@ public class MybatisPlusGenerator {
 
     /**
      * 固有配置-根据项目约定
-     * 1、在core-rpc-service模块下面进行代码生成
-     * 2、只生成Mapper.java、Mapper.xml、Entity.java,使用模板chouti-core\\utils\\src\\main\\resources\\templates\\*.java.vm(复制修改自generator包内的模板)
-     * 3、Entity.java 继承com.gozap.chouti.entity.BaseEntity。带有数据库公共id。不建议无id的表
      */
     public void gen(String[] tableNames, String entityPackageName, String mapperPackageName, boolean fileOverride) {
 
