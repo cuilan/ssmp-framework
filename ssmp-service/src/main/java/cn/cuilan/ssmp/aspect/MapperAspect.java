@@ -7,7 +7,6 @@ import cn.cuilan.ssmp.mapper.CachedMapper;
 import cn.cuilan.ssmp.redis.EntityRedisPrefix;
 import cn.cuilan.ssmp.redis.RedisUtils;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
