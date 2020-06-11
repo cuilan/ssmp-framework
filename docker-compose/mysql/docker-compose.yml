@@ -2,7 +2,7 @@ version: '3'
 services:
   db:
     # 构建mysql镜像
-    image: mysql
+    image: mysql:8
     # 容器名
     container_name: mysql-db
     # 设置utf8字符集
