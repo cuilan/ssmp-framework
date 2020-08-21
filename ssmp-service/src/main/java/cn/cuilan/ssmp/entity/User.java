@@ -1,5 +1,6 @@
 package cn.cuilan.ssmp.entity;
 
+import cn.cuilan.ssmp.annotation.Entity2JSON;
 import cn.cuilan.ssmp.annotation.RedisCached;
 import cn.cuilan.ssmp.common.BaseIdTimeEntity;
 import cn.cuilan.ssmp.enums.Gender;
@@ -11,6 +12,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @RedisCached(EntityRedisPrefix.USER)
+@Entity2JSON
 @TableName("t_user")
 public class User extends BaseIdTimeEntity<Long> {
 
