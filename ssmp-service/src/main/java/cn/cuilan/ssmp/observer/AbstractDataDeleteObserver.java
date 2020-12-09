@@ -30,33 +30,33 @@ import java.util.function.Supplier;
  * @date 2019-12-31
  */
 @Slf4j
-public abstract class AbstractDataDeleteObserver<T extends BaseObservableEntity> implements InitializingBean {
+public abstract class AbstractDataDeleteObserver<T extends BaseObservableEntity<Long>> implements InitializingBean {
 
-    static Map<Class<BaseObservableEntity>, AbstractDataDeleteObserver> deleteObserverMap = new HashMap<>();
+    static Map<Class<BaseObservableEntity<Long>>, AbstractDataDeleteObserver<?>> deleteObserverMap = new HashMap<>();
 
-    private static ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNamePrefix("observer-pool-%d").build();
+    private final static ThreadFactory NAMED_THREAD_FACTORY = new ThreadFactoryBuilder().setNamePrefix("observer-pool-%d").build();
 
     protected static ExecutorService executorService = new ThreadPoolExecutor(0, 50,
             60L, TimeUnit.SECONDS,
-            new LinkedBlockingDeque<>(), namedThreadFactory);
+            new LinkedBlockingDeque<>(), NAMED_THREAD_FACTORY);
 
     Class entityClass;
 
-    BaseMapper baseMapper;
+    BaseMapper<T> baseMapper;
 
-    private List<DeleteHandlerWithContext<T>> beforeHandlerList = new ArrayList<>();
-    private List<DeleteHandlerWithContext<T>> afterHandlerList = new ArrayList<>();
-    private List<DeleteHandlerWithContext<T>> afterCommitHandlerList = new ArrayList<>();
+    private final List<DeleteHandlerWithContext<T>> beforeHandlerList = new ArrayList<>();
+    private final List<DeleteHandlerWithContext<T>> afterHandlerList = new ArrayList<>();
+    private final List<DeleteHandlerWithContext<T>> afterCommitHandlerList = new ArrayList<>();
 
     public AbstractDataDeleteObserver(BaseMapper<T> baseMapper) {
         this.baseMapper = baseMapper;
     }
 
     <R> R delete(T deleted, Function<T, R> deleteFunction) {
-        return delete(deleted, deleteFunction, new ObserverContext());
+        return delete(deleted, deleteFunction, new ObserverContext<T>());
     }
 
-    <R> R delete(T deleted, Function<T, R> deleteFunction, ObserverContext context) {
+    <R> R delete(T deleted, Function<T, R> deleteFunction, ObserverContext<T> context) {
         for (DeleteHandlerWithContext<T> processor : beforeHandlerList) {
             try {
                 processor.handler(deleted, context);
@@ -75,7 +75,7 @@ public abstract class AbstractDataDeleteObserver<T extends BaseObservableEntity>
             }
         }
 
-        Supplier afterCommit = () -> {
+        Supplier<?> afterCommit = () -> {
             executorService.execute(() -> {
                 for (DeleteHandlerWithContext<T> processor : afterCommitHandlerList) {
                     try {
@@ -114,7 +114,7 @@ public abstract class AbstractDataDeleteObserver<T extends BaseObservableEntity>
             }
             entityClass = (Class) typeParams[0];
         }
-        AbstractDataDeleteObserver dataDeleteObserver = deleteObserverMap.get(entityClass);
+        AbstractDataDeleteObserver<?> dataDeleteObserver = deleteObserverMap.get(entityClass);
 
         if (dataDeleteObserver != null) {
             throw new RuntimeException(String.format("%s的观察者存在多个[%s,%s]",

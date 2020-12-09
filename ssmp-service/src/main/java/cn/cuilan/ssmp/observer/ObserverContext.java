@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public class ObserverContext<T> {
 
-    private Map<String, Object> dataMap;
+    private final Map<String, Object> dataMap;
 
     @Getter
     @Setter
@@ -34,7 +34,7 @@ public class ObserverContext<T> {
      * @param value object
      * @return 观察者对象上下文
      */
-    public ObserverContext setData(String key, Object value) {
+    public ObserverContext<T> setData(String key, Object value) {
         dataMap.put(key, value);
         return this;
     }

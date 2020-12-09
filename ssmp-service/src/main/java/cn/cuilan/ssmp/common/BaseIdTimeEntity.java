@@ -61,7 +61,7 @@ public abstract class BaseIdTimeEntity<ID extends Serializable> extends BaseIdEn
     }
 
     @Override
-    protected BaseIdTimeEntity clone() throws CloneNotSupportedException {
-        return (BaseIdTimeEntity) super.clone();
+    protected BaseIdTimeEntity<ID> clone() throws CloneNotSupportedException {
+        return (BaseIdTimeEntity<ID>) super.clone();
     }
 }

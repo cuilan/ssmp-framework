@@ -30,23 +30,23 @@ import java.util.function.Supplier;
  * @date 2019-12-31
  */
 @Slf4j
-public abstract class AbstractDataCreateObserver<T extends BaseObservableEntity> implements InitializingBean {
+public abstract class AbstractDataCreateObserver<T extends BaseObservableEntity<Long>> implements InitializingBean {
 
-    protected static Map<Class<BaseObservableEntity>, AbstractDataCreateObserver> createObserverMap = new HashMap<>();
+    protected static Map<Class<BaseObservableEntity<Long>>, AbstractDataCreateObserver<?>> createObserverMap = new HashMap<>();
 
-    private static ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNamePrefix("observer-pool-%d").build();
+    private final static ThreadFactory NAMED_THREAD_FACTORY = new ThreadFactoryBuilder().setNamePrefix("observer-pool-%d").build();
 
     protected static ExecutorService executorService = new ThreadPoolExecutor(0, 50,
             60L, TimeUnit.SECONDS,
-            new LinkedBlockingQueue<>(), namedThreadFactory);
+            new LinkedBlockingQueue<>(), NAMED_THREAD_FACTORY);
 
     BaseMapper<T> baseMapper;
 
     Class entityClass;
 
-    private List<CreateHandlerWithContext<T>> beforeHandlerList = new ArrayList<>();
-    private List<CreateHandlerWithContext<T>> afterHandlerList = new ArrayList<>();
-    private List<CreateHandlerWithContext<T>> afterCommitHandlerList = new ArrayList<>();
+    private final List<CreateHandlerWithContext<T>> beforeHandlerList = new ArrayList<>();
+    private final List<CreateHandlerWithContext<T>> afterHandlerList = new ArrayList<>();
+    private final List<CreateHandlerWithContext<T>> afterCommitHandlerList = new ArrayList<>();
 
     // 构造器
     public AbstractDataCreateObserver(BaseMapper<T> baseMapper) {
@@ -54,11 +54,11 @@ public abstract class AbstractDataCreateObserver<T extends BaseObservableEntity>
     }
 
     <R> R create(T t, Function<T, R> createFunction) {
-        ObserverContext context = new ObserverContext();
+        ObserverContext<T> context = new ObserverContext<>();
         return create(t, createFunction, context);
     }
 
-    <R> R create(T t, Function<T, R> createFunction, ObserverContext context) {
+    <R> R create(T t, Function<T, R> createFunction, ObserverContext<T> context) {
         for (CreateHandlerWithContext<T> processor : beforeHandlerList) {
             try {
                 processor.handler(t, context);
@@ -77,7 +77,7 @@ public abstract class AbstractDataCreateObserver<T extends BaseObservableEntity>
             }
         }
 
-        Supplier afterCommit = () -> {
+        Supplier<?> afterCommit = () -> {
             executorService.execute(() -> {
                 for (CreateHandlerWithContext<T> processor : afterCommitHandlerList) {
                     try {
@@ -115,7 +115,7 @@ public abstract class AbstractDataCreateObserver<T extends BaseObservableEntity>
             }
             entityClass = (Class) typeParams[0];
         }
-        AbstractDataCreateObserver dataCreateObserver = createObserverMap.get(entityClass);
+        AbstractDataCreateObserver<?> dataCreateObserver = createObserverMap.get(entityClass);
 
         if (dataCreateObserver != null) {
             throw new RuntimeException(String.format("%s的观察者存在多个[%s,%s]",

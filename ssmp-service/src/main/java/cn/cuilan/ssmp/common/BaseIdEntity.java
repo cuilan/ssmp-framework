@@ -29,7 +29,7 @@ public abstract class BaseIdEntity<ID extends Serializable> extends BaseObservab
     protected ID id;
 
     @Override
-    protected BaseIdEntity clone() throws CloneNotSupportedException {
-        return (BaseIdEntity) super.clone();
+    protected BaseIdEntity<ID> clone() throws CloneNotSupportedException {
+        return (BaseIdEntity<ID>) super.clone();
     }
 }

@@ -13,7 +13,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -32,19 +31,19 @@ import java.util.function.Supplier;
  * @date 2019-12-31
  */
 @Slf4j
-public abstract class AbstractDataUpdateObserver<T extends BaseObservableEntity> implements InitializingBean {
+public abstract class AbstractDataUpdateObserver<T extends BaseObservableEntity<Long>> implements InitializingBean {
 
-    static Map<Class<BaseObservableEntity>, AbstractDataUpdateObserver> updateObserverMap = new HashMap<>();
+    static Map<Class<BaseObservableEntity<Long>>, AbstractDataUpdateObserver<?>> updateObserverMap = new HashMap<>();
 
-    private static ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNamePrefix("observer-pool-%d").build();
+    private final static ThreadFactory NAMED_THREAD_FACTORY = new ThreadFactoryBuilder().setNamePrefix("observer-pool-%d").build();
 
     protected static ExecutorService executorService = new ThreadPoolExecutor(0, 50,
             60L, TimeUnit.SECONDS,
-            new LinkedBlockingQueue<>(), namedThreadFactory);
+            new LinkedBlockingQueue<>(), NAMED_THREAD_FACTORY);
 
     Class entityClass;
 
-    BaseMapper baseMapper;
+    BaseMapper<T> baseMapper;
 
     List<UpdateHandlerWithContext<T>> beforeHandlerList = new ArrayList<>();
     List<UpdateHandlerWithContext<T>> afterHandlerList = new ArrayList<>();
@@ -56,23 +55,16 @@ public abstract class AbstractDataUpdateObserver<T extends BaseObservableEntity>
     }
 
     <R> R update(T updated, Function<T, R> updateFunction) {
-        return update(updated, updateFunction, new ObserverContext());
+        return update(updated, updateFunction, new ObserverContext<T>());
     }
 
-    <R> R update(T updated, Function<T, R> updateFunction, ObserverContext context) {
-        Serializable updatedId = updated.getId();
-        if (updatedId == null) {
-            throw new RuntimeException("update 失败，更新对象没有id");
-        }
-        if (!(updatedId instanceof Long)) {
-            throw new RuntimeException("update 失败，更新对象没有id");
-        }
-        Long id = (Long) updatedId;
+    <R> R update(T updated, Function<T, R> updateFunction, ObserverContext<T> context) {
+        Long id = updated.getId();
         QueryWrapper<T> queryWrapper = new QueryWrapper<>();
         long random = System.nanoTime();
         queryWrapper.eq("id", id).eq("" + random, random);
         T old = (T) baseMapper.selectOne(queryWrapper);
-        for (UpdateHandlerWithContext handler : beforeHandlerList) {
+        for (UpdateHandlerWithContext<T> handler : beforeHandlerList) {
             try {
                 handler.handler(old, updated, context);
             } catch (Exception e) {
@@ -81,7 +73,7 @@ public abstract class AbstractDataUpdateObserver<T extends BaseObservableEntity>
             }
         }
         R result = updateFunction.apply(updated);
-        for (UpdateHandlerWithContext handler : afterHandlerList) {
+        for (UpdateHandlerWithContext<T> handler : afterHandlerList) {
             try {
                 handler.handler(old, updated, context);
             } catch (Exception e) {
@@ -89,7 +81,7 @@ public abstract class AbstractDataUpdateObserver<T extends BaseObservableEntity>
                 throw e;
             }
         }
-        Supplier afterCommit = () -> {
+        Supplier<?> afterCommit = () -> {
             executorService.execute(() -> {
                 for (UpdateHandlerWithContext<T> processor : afterCommitHandlerList) {
                     try {
@@ -125,7 +117,7 @@ public abstract class AbstractDataUpdateObserver<T extends BaseObservableEntity>
             }
             entityClass = (Class) typeParams[0];
         }
-        AbstractDataUpdateObserver dataCreateObserver = updateObserverMap.get(entityClass);
+        AbstractDataUpdateObserver<?> dataCreateObserver = updateObserverMap.get(entityClass);
 
         if (dataCreateObserver != null) {
             throw new RuntimeException(String.format("%s的观察者存在多个[%s,%s]",
@@ -142,29 +134,42 @@ public abstract class AbstractDataUpdateObserver<T extends BaseObservableEntity>
     protected abstract void regUpdateObserver(Register register);
 
     public class Register {
+
+        /**
+         * 更新前执行，与数据库操作共享一个事务
+         *
+         * @param des     描述信息
+         * @param handler 更新实体处理器
+         */
         public void beforeUpdate(String des, UpdateHandler<T> handler) {
             beforeHandlerList.add((oldObj, newObj, context) -> handler.handler(oldObj, newObj));
         }
 
+        /**
+         * 更新前执行，与数据库操作共享一个事务
+         *
+         * @param des     描述信息
+         * @param handler 更新实体处理器
+         */
         public void beforeUpdate(String des, UpdateHandlerWithContext<T> handler) {
             beforeHandlerList.add(handler);
         }
 
         /**
-         * 与数据库操作共享一个事务
+         * 更新执行后，与数据库操作共享一个事务
          *
-         * @param des
-         * @param handler
+         * @param des     描述信息
+         * @param handler 更新实体处理器
          */
         public void afterUpdate(String des, UpdateHandler<T> handler) {
             afterHandlerList.add((oldObj, newObj, context) -> handler.handler(oldObj, newObj));
         }
 
         /**
-         * 与数据库操作共享一个事务
+         * 更新执行后，与数据库操作共享一个事务
          *
-         * @param des
-         * @param handler
+         * @param des     描述信息
+         * @param handler 更新实体处理器
          */
         public void afterUpdate(String des, UpdateHandlerWithContext<T> handler) {
             afterHandlerList.add(handler);
@@ -173,6 +178,9 @@ public abstract class AbstractDataUpdateObserver<T extends BaseObservableEntity>
         /**
          * 同步执行
          * 与数据库操作事务分离
+         *
+         * @param des     描述信息
+         * @param handler 更新实体处理器
          */
         public void afterUpdateCommit(String des, UpdateHandler<T> handler) {
             afterCommitHandlerList.add((oldObj, newObj, context) -> handler.handler(oldObj, newObj));
@@ -181,6 +189,9 @@ public abstract class AbstractDataUpdateObserver<T extends BaseObservableEntity>
         /**
          * 异步执行
          * 与数据库操作事务分离
+         *
+         * @param des     描述信息
+         * @param handler 更新实体处理器
          */
         public void afterUpdateCommit(String des, UpdateHandlerWithContext<T> handler) {
             afterCommitHandlerList.add(handler);

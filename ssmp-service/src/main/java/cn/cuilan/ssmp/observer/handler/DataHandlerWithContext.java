@@ -8,7 +8,7 @@ import cn.cuilan.ssmp.observer.ObserverContext;
  *
  * @param <T> 实体
  */
-public interface DataHandlerWithContext<T extends BaseObservableEntity> {
+public interface DataHandlerWithContext<T extends BaseObservableEntity<Long>> {
 
     /**
      * 执行处理方法
@@ -16,6 +16,6 @@ public interface DataHandlerWithContext<T extends BaseObservableEntity> {
      * @param obj     T类型对象
      * @param context 观察者对象上下文
      */
-    void handler(T obj, ObserverContext context);
+    void handler(T obj, ObserverContext<T> context);
 
 }

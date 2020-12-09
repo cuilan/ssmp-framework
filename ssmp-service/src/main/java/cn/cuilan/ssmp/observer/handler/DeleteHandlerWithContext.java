@@ -7,5 +7,5 @@ import cn.cuilan.ssmp.common.BaseObservableEntity;
  *
  * @param <T> 实体
  */
-public interface DeleteHandlerWithContext<T extends BaseObservableEntity> extends DataHandlerWithContext<T> {
+public interface DeleteHandlerWithContext<T extends BaseObservableEntity<Long>> extends DataHandlerWithContext<T> {
 }

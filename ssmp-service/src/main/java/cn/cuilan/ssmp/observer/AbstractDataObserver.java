@@ -17,7 +17,7 @@ import java.util.function.Function;
  * @date 2019-12-31
  */
 @Slf4j
-public abstract class AbstractDataObserver<T extends BaseObservableEntity> implements InitializingBean {
+public abstract class AbstractDataObserver<T extends BaseObservableEntity<Long>> implements InitializingBean {
 
     // 实体创建观察者
     AbstractDataCreateObserver<T> dataCreateObserver;
@@ -63,7 +63,7 @@ public abstract class AbstractDataObserver<T extends BaseObservableEntity> imple
         if (typeParams.length != 1) {
             throw new RuntimeException(String.format("初始化观察者失败,观察者父类需要设置泛型[%s]", this.getClass().getSimpleName()));
         }
-        Class entityClass = (Class) typeParams[0];
+        Class<?> entityClass = (Class<?>) typeParams[0];
         dataCreateObserver.entityClass = entityClass;
         dataCreateObserver.afterPropertiesSet();
         dataUpdateObserver.entityClass = entityClass;
@@ -82,7 +82,7 @@ public abstract class AbstractDataObserver<T extends BaseObservableEntity> imple
         dataCreateObserver.create(t, consumer);
     }
 
-    final void create(T t, Function<T, Object> consumer, ObserverContext context) {
+    final void create(T t, Function<T, Object> consumer, ObserverContext<T> context) {
         dataCreateObserver.create(t, consumer, context);
     }
 
@@ -90,7 +90,7 @@ public abstract class AbstractDataObserver<T extends BaseObservableEntity> imple
         dataUpdateObserver.update(updated, consumer);
     }
 
-    final void update(T updated, Function<T, Object> consumer, ObserverContext context) {
+    final void update(T updated, Function<T, Object> consumer, ObserverContext<T> context) {
         dataUpdateObserver.update(updated, consumer, context);
     }
 
@@ -98,7 +98,7 @@ public abstract class AbstractDataObserver<T extends BaseObservableEntity> imple
         dataDeleteObserver.delete(t, consumer);
     }
 
-    final void delete(T t, Function<T, Object> consumer, ObserverContext context) {
+    final void delete(T t, Function<T, Object> consumer, ObserverContext<T> context) {
         dataDeleteObserver.delete(t, consumer, context);
     }
 }

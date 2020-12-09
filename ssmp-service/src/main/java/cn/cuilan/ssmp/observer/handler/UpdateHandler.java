@@ -7,7 +7,7 @@ import cn.cuilan.ssmp.common.BaseObservableEntity;
  *
  * @param <T> 实体
  */
-public interface UpdateHandler<T extends BaseObservableEntity> {
+public interface UpdateHandler<T extends BaseObservableEntity<Long>> {
 
     /**
      * 执行更新处理方法
