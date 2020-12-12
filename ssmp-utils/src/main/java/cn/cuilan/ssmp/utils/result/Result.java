@@ -164,7 +164,11 @@ public class Result<T extends Object> {
 
     public static class MapResult extends Result<Map<String, Object>> {
         public MapResult data(String key, Object value) {
-            this.getData().put(key, value);
+            if (value instanceof Page) {
+                this.getData().put(key, new PageInfo((Page) value));
+            } else {
+                this.getData().put(key, value);
+            }
             return this;
         }
     }
