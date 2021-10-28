@@ -30,3 +30,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+.DS_Store
+log
+logs
+*.log
+*.logs
